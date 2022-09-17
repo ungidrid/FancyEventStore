@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
+	<UserSecretsId>95283720-81bc-486d-88eb-b2a787bb11bd</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FancyEventStore.Application\FancyEventStore.Application.csproj" />
+    <ProjectReference Include="..\FancyEventStore.EfCoreStore\FancyEventStore.EfCoreStore.csproj" />
+    <ProjectReference Include="..\FancyEventStore.EventStore\FancyEventStore.EventStore.csproj" />
+    <ProjectReference Include="..\FancyEventStore.ReadModel\FancyEventStore.ReadModel.csproj" />
+    <ProjectReference Include="..\FancyEventStore.Repositories\FancyEventStore.Repositories.csproj" />
+  </ItemGroup>
+
+</Project>
