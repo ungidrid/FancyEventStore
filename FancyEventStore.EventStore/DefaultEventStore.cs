@@ -81,7 +81,7 @@ namespace FancyEventStore.EventStore
 
             eventStream ??= new EventStream()
             {
-                StreamId = aggregate.Id
+                StreamId = aggregate.Id,
             };
             return eventStream;
         }

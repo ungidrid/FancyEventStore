@@ -12,7 +12,7 @@ namespace FancyEventStore.MongoDbStore
             {
                 StreamId = stream.StreamId,
                 Version = stream.Version,
-                ConcurrencyToken = new Guid(stream.Timestamp),
+                ConcurrencyToken = new Guid(stream.Timestamp ?? Guid.NewGuid().ToByteArray()),
                 Events = events.Select(x => new Entities.Event
                 {
                     StreamId = stream.StreamId,

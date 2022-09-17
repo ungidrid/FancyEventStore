@@ -11,9 +11,17 @@ namespace FancyEventStore.MongoDbStore
 {
     public class MongoDbStoreRegistrar : IStoreRegistrar
     {
+        private readonly string _connectionString;
+
+        public MongoDbStoreRegistrar(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
         public void RegisterStore(IServiceCollection services)
         {
-            services.AddScoped<IMongoClient>(_ => new MongoClient("mongodb+srv://root:prokiller00@eventstore.rf4fems.mongodb.net/test"));
+            services.AddScoped<IMongoClient>(_ => new MongoClient(_connectionString));
+            services.AddScoped<IStore, MongoDbStore>();
         }
     }
 }

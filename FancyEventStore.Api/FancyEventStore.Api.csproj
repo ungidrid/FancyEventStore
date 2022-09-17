@@ -24,6 +24,7 @@
     <ProjectReference Include="..\FancyEventStore.Application\FancyEventStore.Application.csproj" />
     <ProjectReference Include="..\FancyEventStore.EfCoreStore\FancyEventStore.EfCoreStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.EventStore\FancyEventStore.EventStore.csproj" />
+    <ProjectReference Include="..\FancyEventStore.MongoDbStore\FancyEventStore.MongoDbStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.ReadModel\FancyEventStore.ReadModel.csproj" />
     <ProjectReference Include="..\FancyEventStore.Repositories\FancyEventStore.Repositories.csproj" />
   </ItemGroup>

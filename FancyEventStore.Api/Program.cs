@@ -1,15 +1,10 @@
-
 using FancyEventStore.Common;
-using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Serializers;
+using FancyEventStore.MongoDbStore;
 using FancyEventStore.ReadModel;
 using FancyEventStore.Repositories;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Meta;
-using System.Data;
-using System.Data.Common;
 using System.Reflection;
 
 RuntimeTypeModel.Default.Add(typeof(DateTimeOffset), false).SetSurrogate(typeof(DateTimeOffsetSurrogate));
@@ -23,15 +18,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("FancyEventStoreDb");
+var sqlConnectionString = builder.Configuration.GetConnectionString("FancyEventStoreDb");
+var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbEventStore");
 builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
     opts =>
     {
-        opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(connectionString));
+        //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(connectionString));
+        opts.UseMongoDb(mongoConnectionString);
         opts.EventSerializer = EventSerializers.Json;
     });
+
 builder.Services.AddRepositories();
-builder.Services.AddScoped<IReadModelContext>(_ => new ReadModelContext(connectionString));
+builder.Services.AddScoped<IReadModelContext>(_ => new ReadModelContext(sqlConnectionString));
 
 var app = builder.Build();
 

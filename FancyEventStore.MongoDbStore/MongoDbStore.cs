@@ -50,7 +50,7 @@ namespace FancyEventStore.MongoDbStore
             if(fromVersion == null && toVersion == null)
             {
                 var stream = await GetStreamAsync(streamId, true);
-                events = stream.Events;
+                events = stream?.Events;
             }
             else
             {
@@ -69,10 +69,10 @@ namespace FancyEventStore.MongoDbStore
                     .Project<Entities.FilteredEventsCollection>(new BsonDocument("Events", 1))
                     .FirstOrDefaultAsync();
 
-                events = stream.Events;
+                events = stream?.Events;
             }
 
-            return events.Select(x => x.ConvertToDomain()).ToList();
+            return events?.Select(x => x.ConvertToDomain()).ToList();
         }
 
         public async Task<Snapshot> GetNearestSnapshotAsync(Guid streamId, long? version = null)
@@ -83,7 +83,7 @@ namespace FancyEventStore.MongoDbStore
         public async Task<EventStream> GetStreamAsync(Guid streamId)
         {
             var eventStream = await GetStreamAsync(streamId, false);
-            return eventStream.ConvertToDomain();
+            return eventStream?.ConvertToDomain();
         }
 
         public Task SaveSnapshot(Snapshot snapshot)
