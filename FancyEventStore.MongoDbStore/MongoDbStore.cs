@@ -1,10 +1,12 @@
 ﻿using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Snapshots;
+using FancyEventStore.MongoDbStore.EntityProjection;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,18 +57,11 @@ namespace FancyEventStore.MongoDbStore
             else
             {
                 var stream = await collection.Aggregate()
-                    .Unwind(x => x.Events)
-                    .Match(new BsonDocument("$and", 
-                        new BsonArray
-                        {
-                            new BsonDocument("Events.Version", new BsonDocument("$gte", fromVersion ?? 0)),
-                            new BsonDocument("Events.Version", new BsonDocument("$lte", toVersion ?? long.MaxValue))
-                        }))
-                    .Group(new BsonDocument{
-                        { "_id", "$Events.StreamId" },
-                        { "Events", new BsonDocument("$push", "$Events")}
-                    })
-                    .Project<Entities.FilteredEventsCollection>(new BsonDocument("Events", 1))
+                    .Match(x => x.StreamId == streamId)
+                    .Unwind<Entities.EventStream, EventStreamEventFlattened>(x => x.Events)
+                    .Match(x => (fromVersion == null || x.Events.Version >= fromVersion) 
+                                && (toVersion == null || x.Events.Version <= toVersion))
+                    .Group(x => x.StreamId, x => new FilteredEventsCollection { StreamId = x.Key, Events = x.Select(e => e.Events)})
                     .FirstOrDefaultAsync();
 
                 events = stream?.Events;
@@ -80,13 +75,14 @@ namespace FancyEventStore.MongoDbStore
             var collection = GetEventStreamsCollection();
 
             var snapshot = await collection.Aggregate()
-                .Unwind(x => x.Snapshots)
-                .Match(new BsonDocument("Snapshots.Version", new BsonDocument("$lte", version ?? long.MaxValue)))
-                .Sort(new BsonDocument("Snapshots.Version", -1))
-                .Project<Entities.FilteredSnapshot>(new BsonDocument("Snapshot", "$Snapshots"))
+                .Match(x => x.StreamId == streamId)
+                .Unwind<Entities.EventStream, EventStreamSnapshotFlattened>(x => x.Snapshots)
+                .Match(x => version == null || x.Snapshots.Version <= version)
+                .SortByDescending(x => x.Snapshots.Version)
+                .Project(x => new FilteredSnapshot { Id = x.Id, Snapshots = x.Snapshots})
                 .FirstOrDefaultAsync();
 
-            return snapshot?.Snapshot?.ToDomain();
+            return snapshot?.Snapshots?.ToDomain();
         }
 
         public async Task<EventStream> GetStreamAsync(Guid streamId)

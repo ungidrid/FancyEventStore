@@ -10,6 +10,10 @@ namespace FancyEventStore.Domain.TemperatureMeasurement
         public DateTimeOffset? LastRecorded { get; set; }
         public List<decimal> Mesurements { get; set; } = default!;
 
+        public TemperatureMeasurement()
+        {
+        }
+
         [JsonConstructor]
         public TemperatureMeasurement(Guid id, long version)
         {
