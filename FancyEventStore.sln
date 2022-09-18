@@ -30,11 +30,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyEventStore.Repositorie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyEventStore.ReadModel", "FancyEventStore.ReadModel\FancyEventStore.ReadModel.csproj", "{7C85CDFC-A9D3-451A-B8CB-A551EDB940BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyEventStore.MongoDbStore", "FancyEventStore.MongoDbStore\FancyEventStore.MongoDbStore.csproj", "{F1B81E07-8629-4719-BC2D-789ACAF00BA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyEventStore.MongoDbStore", "FancyEventStore.MongoDbStore\FancyEventStore.MongoDbStore.csproj", "{F1B81E07-8629-4719-BC2D-789ACAF00BA6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{67DDF797-D450-4BF8-9D26-D833A35D7984}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyEventStore.ConsoleTest", "FancyEventStore.ConsoleTest\FancyEventStore.ConsoleTest.csproj", "{4B2535FB-5383-4D54-9FE8-ED9172626690}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyEventStore.ConsoleTest", "FancyEventStore.ConsoleTest\FancyEventStore.ConsoleTest.csproj", "{4B2535FB-5383-4D54-9FE8-ED9172626690}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actors", "Actors", "{E541F48D-74AA-4C49-9DE4-EEA3C98DDBD0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntActor.Core", "AntActor.Core\AntActor.Core.csproj", "{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,6 +86,10 @@ Global
 		{4B2535FB-5383-4D54-9FE8-ED9172626690}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B2535FB-5383-4D54-9FE8-ED9172626690}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B2535FB-5383-4D54-9FE8-ED9172626690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +101,7 @@ Global
 		{7C85CDFC-A9D3-451A-B8CB-A551EDB940BF} = {AD5C9DA6-708F-4A28-B532-9995AD29C0B9}
 		{F1B81E07-8629-4719-BC2D-789ACAF00BA6} = {AD5C9DA6-708F-4A28-B532-9995AD29C0B9}
 		{4B2535FB-5383-4D54-9FE8-ED9172626690} = {67DDF797-D450-4BF8-9D26-D833A35D7984}
+		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1} = {E541F48D-74AA-4C49-9DE4-EEA3C98DDBD0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D9560CDF-14B6-4612-B29D-6452E30825EA}
