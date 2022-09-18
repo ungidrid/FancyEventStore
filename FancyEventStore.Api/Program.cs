@@ -1,3 +1,4 @@
+using AntActor.Core;
 using FancyEventStore.Common;
 using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
@@ -26,7 +27,7 @@ var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbEv
 builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
     opts =>
     {
-        //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
+        opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
         opts.UseMongoDb(mongoConnectionString);
         opts.EventSerializer = EventSerializers.Json;
         opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(10);
@@ -34,6 +35,11 @@ builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
 
 builder.Services.AddRepositories();
 builder.Services.AddScoped<IReadModelContext>(_ => new ReadModelContext(sqlConnectionString));
+
+builder.Services.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
+builder.Services.AddScoped<Anthill>();
+
+//builder.Services.AddAntActor();
 
 var app = builder.Build();
 

@@ -6,7 +6,7 @@ namespace AntActor.Core
     {
         public static void AddAntActor(this IServiceCollection services)
         {
-            services.AddTransient<IAntResolver, DIResolver>();
+            services.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
             services.AddSingleton<Anthill>();
         }
     }

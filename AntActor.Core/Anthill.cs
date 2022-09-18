@@ -6,7 +6,7 @@ namespace AntActor.Core
     public class Anthill
     {
         private readonly IAntResolver _antResolver;
-        private readonly ConcurrentDictionary<(Type, string), IAnt> _ants = new();
+        private static readonly ConcurrentDictionary<(Type, string), IAnt> _ants = new();
 
         public Anthill(IAntResolver antResolver)
         {

@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AntActor.Core\AntActor.Core.csproj" />
     <ProjectReference Include="..\FancyEventStore.Application\FancyEventStore.Application.csproj" />
     <ProjectReference Include="..\FancyEventStore.EfCoreStore\FancyEventStore.EfCoreStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.EventStore\FancyEventStore.EventStore.csproj" />

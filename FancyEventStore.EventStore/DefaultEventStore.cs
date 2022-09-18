@@ -23,6 +23,9 @@ namespace FancyEventStore.EventStore
             Guid aggregateId, 
             long? version = null) where TAggregate : IAggregate
         {
+            var stream = await _store.GetStreamAsync(aggregateId);
+            if (stream == null) return default;
+
             var latestSnapshot = await _store.GetNearestSnapshotAsync(aggregateId, version);
             var aggregate = latestSnapshot == null
                 ? Activator.CreateInstance<TAggregate>()
