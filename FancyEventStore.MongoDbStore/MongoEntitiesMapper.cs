@@ -1,10 +1,11 @@
 ﻿using FancyEventStore.EventStore;
+using FancyEventStore.EventStore.Snapshots;
 
 namespace FancyEventStore.MongoDbStore
 {
     internal static class MongoEntitiesMapper
     {
-        public static Entities.EventStream ConvertToEntity(IEnumerable<Event> events)
+        public static Entities.EventStream ToEntity(IEnumerable<Event> events)
         {
             var stream = events.FirstOrDefault().Stream;
 
@@ -26,7 +27,7 @@ namespace FancyEventStore.MongoDbStore
             return eventStream;
         }
 
-        public static Event ConvertToDomain(this Entities.Event @event)
+        public static Event ToDomain(this Entities.Event @event)
         {
             return new Event
             {
@@ -38,13 +39,35 @@ namespace FancyEventStore.MongoDbStore
             };
         }
 
-        public static EventStream ConvertToDomain(this Entities.EventStream eventStream)
+        public static EventStream ToDomain(this Entities.EventStream eventStream)
         {
             return new EventStream
             {
                 StreamId = eventStream.StreamId,
                 Version = eventStream.Version,
                 Timestamp = eventStream.ConcurrencyToken.ToByteArray()
+            };
+        }
+
+        public static Entities.Snapshot ToEntity(this Snapshot snapshot)
+        {
+            return new Entities.Snapshot
+            {
+                StreamId = snapshot.StreamId,
+                Data = snapshot.Data,
+                Version = snapshot.Version,
+                CreatedAt = snapshot.CreatedAt
+            };
+        }
+
+        public static Snapshot ToDomain(this Entities.Snapshot snapshot)
+        {
+            return new Snapshot
+            {
+                StreamId = snapshot.StreamId,
+                Data = snapshot.Data,
+                Version = snapshot.Version,
+                CreatedAt = snapshot.CreatedAt
             };
         }
     }

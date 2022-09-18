@@ -1,5 +1,6 @@
 ﻿using FancyEventStore.Domain.Abstract;
 using FancyEventStore.Domain.TemperatureMeasurement.Events;
+using System.Text.Json.Serialization;
 
 namespace FancyEventStore.Domain.TemperatureMeasurement
 {
@@ -9,8 +10,11 @@ namespace FancyEventStore.Domain.TemperatureMeasurement
         public DateTimeOffset? LastRecorded { get; set; }
         public List<decimal> Mesurements { get; set; } = default!;
 
-        public TemperatureMeasurement()
+        [JsonConstructor]
+        public TemperatureMeasurement(Guid id, long version)
         {
+            Id = id;
+            Version = version;
         }
 
         private TemperatureMeasurement(Guid id)

@@ -12,7 +12,7 @@ namespace FancyEventStore.EventStore.Snapshots
         public Guid StreamId { get; set; }
         public string Data { get; set; }
         public long Version { get; set; }
-        public DateTime CreatedAt { get; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public EventStream EventStream { get; set; }
     }

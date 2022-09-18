@@ -1,9 +1,12 @@
 using FancyEventStore.Common;
+using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Serializers;
+using FancyEventStore.EventStore.Snapshots;
 using FancyEventStore.MongoDbStore;
 using FancyEventStore.ReadModel;
 using FancyEventStore.Repositories;
+using Microsoft.EntityFrameworkCore;
 using ProtoBuf.Meta;
 using System.Reflection;
 
@@ -23,9 +26,10 @@ var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbEv
 builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
     opts =>
     {
-        //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(connectionString));
+        //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
         opts.UseMongoDb(mongoConnectionString);
         opts.EventSerializer = EventSerializers.Json;
+        opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(10);
     });
 
 builder.Services.AddRepositories();

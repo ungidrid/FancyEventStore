@@ -40,7 +40,7 @@ namespace FancyEventStore.EventStore
                 aggregate.When(domainEvent);
             });
 
-            var aggregateVersion = events.Max(x => x.Version);
+            var aggregateVersion = events.Any() ? events.Max(x => x.Version) : latestSnapshot.Version;
             aggregate.SetVersion(aggregateVersion);
 
             return aggregate;
@@ -86,6 +86,7 @@ namespace FancyEventStore.EventStore
             return eventStream;
         }
 
+        //TODO Think about possible concurrency problems when making snapshots
         private async Task HandleShnapshots<TAggregate>(TAggregate aggregate, List<Event> eventsToStore) where TAggregate : IAggregate
         {
             var latestSnapshot = await _store.GetNearestSnapshotAsync(aggregate.Id);

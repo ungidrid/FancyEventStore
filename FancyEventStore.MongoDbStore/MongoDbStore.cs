@@ -22,7 +22,7 @@ namespace FancyEventStore.MongoDbStore
         public async Task AppendEventsAsync(IEnumerable<Event> events)
         {
             var collection = GetEventStreamsCollection();
-            var eventStream = MongoEntitiesMapper.ConvertToEntity(events);
+            var eventStream = MongoEntitiesMapper.ToEntity(events);
 
             var update = Builders<Entities.EventStream>.Update
                 .Set(x => x.StreamId, eventStream.StreamId)
@@ -72,23 +72,38 @@ namespace FancyEventStore.MongoDbStore
                 events = stream?.Events;
             }
 
-            return events?.Select(x => x.ConvertToDomain()).ToList();
+            return events?.Select(x => x.ToDomain()).ToList().AsEnumerable() ?? Enumerable.Empty<Event>();
         }
 
         public async Task<Snapshot> GetNearestSnapshotAsync(Guid streamId, long? version = null)
         {
-            return null;
+            var collection = GetEventStreamsCollection();
+
+            var snapshot = await collection.Aggregate()
+                .Unwind(x => x.Snapshots)
+                .Match(new BsonDocument("Snapshots.Version", new BsonDocument("$lte", version ?? long.MaxValue)))
+                .Sort(new BsonDocument("Snapshots.Version", -1))
+                .Project<Entities.FilteredSnapshot>(new BsonDocument("Snapshot", "$Snapshots"))
+                .FirstOrDefaultAsync();
+
+            return snapshot?.Snapshot?.ToDomain();
         }
 
         public async Task<EventStream> GetStreamAsync(Guid streamId)
         {
             var eventStream = await GetStreamAsync(streamId, false);
-            return eventStream?.ConvertToDomain();
+            return eventStream?.ToDomain();
         }
 
-        public Task SaveSnapshot(Snapshot snapshot)
+        public async Task SaveSnapshot(Snapshot snapshot)
         {
-            return Task.CompletedTask;
+            var collection = GetEventStreamsCollection();
+            var snapshotEntity = snapshot.ToEntity();
+
+            var update = Builders<Entities.EventStream>.Update
+                .Push(x => x.Snapshots, snapshotEntity);
+
+            await collection.UpdateOneAsync(x => x.StreamId == snapshot.StreamId, update);
         }
 
         private async Task<Entities.EventStream> GetStreamAsync(Guid streamId, bool includeEvents)

@@ -1,4 +1,7 @@
-﻿namespace FancyEventStore.Domain.Abstract
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace FancyEventStore.Domain.Abstract
 {
     public abstract class Aggregate : IAggregate
     {

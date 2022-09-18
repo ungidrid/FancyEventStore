@@ -8,19 +8,15 @@ using System.Threading.Tasks;
 
 namespace FancyEventStore.MongoDbStore.Entities
 {
-    internal class EventStream
+    internal class Snapshot
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        public ObjectId SnapshotId { get; set; }
         public Guid StreamId { get; set; }
+
+        [BsonElement]
+        public string Data { get; set; }
         public long Version { get; set; }
-
-        public Guid ConcurrencyToken { get; set; }
-
-        [BsonElement]
-        public ICollection<Event> Events { get; set; }
-
-        [BsonElement]
-        public ICollection<Snapshot> Snapshots { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
