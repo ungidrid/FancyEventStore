@@ -1,5 +1,6 @@
 using AntActor.Core;
 using FancyEventStore.Common;
+using FancyEventStore.DapperDummyStore;
 using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Serializers;
@@ -23,15 +24,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var sqlConnectionString = builder.Configuration.GetConnectionString("FancyEventStoreDb");
+var unsafeSqlConnectionString = builder.Configuration.GetConnectionString("FancyEventStoreUnsafeDb");
 var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbEventStore");
+
 builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
     opts =>
     {
-        opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
-        opts.UseMongoDb(mongoConnectionString);
+        //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
+        //opts.UseMongoDb(mongoConnectionString);
+        opts.UseDummyDapperStore(unsafeSqlConnectionString);
         opts.EventSerializer = EventSerializers.Json;
         opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(10);
-    });
+    }, 
+    true);
 
 builder.Services.AddRepositories();
 builder.Services.AddScoped<IReadModelContext>(_ => new ReadModelContext(sqlConnectionString));

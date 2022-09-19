@@ -6,9 +6,16 @@ namespace FancyEventStore.EventStore
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddEventStore(this IServiceCollection services, Assembly projectionsAssembly, Action<EventStoreOptions> eventStoreOptionsFactory)
+        public static IServiceCollection AddEventStore(this IServiceCollection services, Assembly projectionsAssembly, Action<EventStoreOptions> eventStoreOptionsFactory, bool useUnsafeStore = false)
         {
-            services.AddScoped<IEventStore, DefaultEventStore>();
+            if (useUnsafeStore)
+            {
+                services.AddScoped<IEventStore, UnsafeEventStore>();
+            }
+            else
+            {
+                services.AddScoped<IEventStore, DefaultEventStore>();
+            }
 
             services.Scan(scan =>
                 scan.FromAssemblies(projectionsAssembly)

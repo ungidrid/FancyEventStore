@@ -40,6 +40,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Actors", "Actors", "{E541F4
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntActor.Core", "AntActor.Core\AntActor.Core.csproj", "{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyEventStore.DapperDummyStore", "FancyEventStore.DapperDummyStore\FancyEventStore.DapperDummyStore.csproj", "{8029C922-A79D-4F13-975D-3E1E4D042BB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,10 @@ Global
 		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8029C922-A79D-4F13-975D-3E1E4D042BB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8029C922-A79D-4F13-975D-3E1E4D042BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8029C922-A79D-4F13-975D-3E1E4D042BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8029C922-A79D-4F13-975D-3E1E4D042BB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +108,7 @@ Global
 		{F1B81E07-8629-4719-BC2D-789ACAF00BA6} = {AD5C9DA6-708F-4A28-B532-9995AD29C0B9}
 		{4B2535FB-5383-4D54-9FE8-ED9172626690} = {67DDF797-D450-4BF8-9D26-D833A35D7984}
 		{BDB0158D-9C6C-4B28-81CB-4C657576CBF1} = {E541F48D-74AA-4C49-9DE4-EEA3C98DDBD0}
+		{8029C922-A79D-4F13-975D-3E1E4D042BB2} = {AD5C9DA6-708F-4A28-B532-9995AD29C0B9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D9560CDF-14B6-4612-B29D-6452E30825EA}
