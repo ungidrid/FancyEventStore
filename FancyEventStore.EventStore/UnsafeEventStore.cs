@@ -62,7 +62,7 @@ namespace FancyEventStore.EventStore
                 Version = ++currentEventVersion
             }).ToList();
 
-            await _store.AppendEventsAsync(eventsToStore);
+            await _store.AppendEventsAsync(null, eventsToStore); //TODO Might cause issues
 
             HandleProjections(events);
             await HandleShnapshots(aggregate, eventsToStore);

@@ -14,7 +14,7 @@ namespace FancyEventStore.EfCoreStore
             _context = context;
         }
 
-        public async Task AppendEventsAsync(IEnumerable<Event> events)
+        public async Task AppendEventsAsync(EventStream stream, IEnumerable<Event> events)
         {
             try
             {

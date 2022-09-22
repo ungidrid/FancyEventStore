@@ -70,7 +70,7 @@ namespace FancyEventStore.EventStore
 
             eventStream.Version = currentEventVersion;
 
-            await _store.AppendEventsAsync(eventsToStore);
+            await _store.AppendEventsAsync(eventStream, eventsToStore);
 
             HandleProjections(events);
             await HandleShnapshots(aggregate, eventsToStore);

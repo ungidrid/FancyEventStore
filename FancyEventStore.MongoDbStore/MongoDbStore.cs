@@ -22,7 +22,7 @@ namespace FancyEventStore.MongoDbStore
             _mongoClient = mongoClient;
         }
 
-        public async Task AppendEventsAsync(IEnumerable<Event> events)
+        public async Task AppendEventsAsync(EventStream stream, IEnumerable<Event> events)
         {
             var collection = GetEventStreamsCollection();
             var eventStream = MongoEntitiesMapper.ToEntity(events);

@@ -16,7 +16,7 @@ namespace FancyEventStore.DapperDummyStore
             EnsureCreated();
         }
 
-        public async Task AppendEventsAsync(IEnumerable<Event> events)
+        public async Task AppendEventsAsync(EventStream stream, IEnumerable<Event> events)
         {
             var mergeSql = @"MERGE INTO EventStreams AS TARGET
                         USING (SELECT @StreamId StreamId) AS SOURCE
