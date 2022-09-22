@@ -30,13 +30,13 @@ var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbEv
 builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
     opts =>
     {
-        //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
+        opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
         //opts.UseMongoDb(mongoConnectionString);
-        opts.UseDummyDapperStore(unsafeSqlConnectionString);
+        //opts.UseDummyDapperStore(unsafeSqlConnectionString);
         opts.EventSerializer = EventSerializers.Json;
         opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(10);
-    }, 
-    true);
+    },
+    false);
 
 builder.Services.AddRepositories();
 builder.Services.AddScoped<IReadModelContext>(_ => new ReadModelContext(sqlConnectionString));

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FancyEventStore.DapperProductionStore\FancyEventStore.DapperProductionStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.MongoDbStore\FancyEventStore.MongoDbStore.csproj" />
   </ItemGroup>
 

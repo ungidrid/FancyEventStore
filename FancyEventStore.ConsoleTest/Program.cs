@@ -1,14 +1,6 @@
-﻿using FancyEventStore.EventStore;
-using FancyEventStore.MongoDbStore;
-using MongoDB.Driver;
+﻿using FancyEventStore.DapperProductionStore;
 
-var mongoClient = new MongoClient("mongodb+srv://root:prokiller00@eventstore.rf4fems.mongodb.net/test");
-var eventStore = new MongoDbStore(mongoClient);
+var connectionString = "Data Source=LAPTOP-DDOSKACH;Initial Catalog = FancyEventStoreDb; Integrated Security = True; Connect Timeout = 3600";
+var context = new DbContext(connectionString);
 
-var streamId = Guid.Parse("78f65243-0114-483b-827b-ade710b7975f");
-var events = await eventStore.GetEventsAsync(streamId, 2, 5);
-
-Console.ReadLine();
-
-int i, a = 0;
-
+context.EnsureCreated();
