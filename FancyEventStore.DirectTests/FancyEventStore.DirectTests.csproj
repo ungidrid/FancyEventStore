@@ -15,6 +15,7 @@
     <ProjectReference Include="..\AntActor.Core\AntActor.Core.csproj" />
     <ProjectReference Include="..\FancyEventStore.Common\FancyEventStore.Common.csproj" />
     <ProjectReference Include="..\FancyEventStore.DapperDummyStore\FancyEventStore.DapperDummyStore.csproj" />
+    <ProjectReference Include="..\FancyEventStore.DapperProductionStore\FancyEventStore.DapperProductionStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.Domain\FancyEventStore.Domain.csproj" />
     <ProjectReference Include="..\FancyEventStore.EfCoreStore\FancyEventStore.EfCoreStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.EventStore\FancyEventStore.EventStore.csproj" />

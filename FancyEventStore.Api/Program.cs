@@ -1,6 +1,7 @@
 using AntActor.Core;
 using FancyEventStore.Common;
 using FancyEventStore.DapperDummyStore;
+using FancyEventStore.DapperProductionStore;
 using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Serializers;
@@ -30,7 +31,8 @@ var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDbEv
 builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
     opts =>
     {
-        opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
+        opts.UseDapperStore(sqlConnectionString);
+        //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
         //opts.UseMongoDb(mongoConnectionString);
         //opts.UseDummyDapperStore(unsafeSqlConnectionString);
         opts.EventSerializer = EventSerializers.Json;

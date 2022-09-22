@@ -1,5 +1,6 @@
 ﻿using AntActor.Core;
 using FancyEventStore.DapperDummyStore;
+using FancyEventStore.DapperProductionStore;
 using FancyEventStore.DirectTests;
 using FancyEventStore.DirectTests.Tests.Test1;
 using FancyEventStore.Domain.TemperatureMeasurement;
@@ -30,11 +31,16 @@ internal class Program
         //var test1Ef = ActivatorUtilities.CreateInstance<Test1EF>(_provider, "test1_ef.txt");
         //await test1Ef.Run();
 
+        //Console.WriteLine("Start Dummy Dapper");
+        //_services = ConfigureDummyDapperServices();
+        //_provider = _services.BuildServiceProvider();
+        //var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(_provider, "test1_dapper.txt", Configuration.UnsafeSqlConnectionString);
+        //await test1Dapper.Run();
+
         Console.WriteLine("Start Dapper");
         _services = ConfigureDapperServices();
         _provider = _services.BuildServiceProvider();
-        var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(_provider, "test1_dapper.txt", Configuration.UnsafeSqlConnectionString);
-        await test1Dapper.Run();
+        var test1Dapper = ActivatorUtilities.CreateInstance<Test1DummyDapper>(_provider, "test1_dapper.txt", Configuration.UnsafeSqlConnectionString);
     }
 
 
@@ -48,36 +54,10 @@ internal class Program
             opts =>
             {
                 opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(Configuration.SqlConnectionString));
-                //opts.UseMongoDb(mongoConnectionString);
-                //opts.UseDummyDapperStore(unsafeSqlConnectionString);
                 opts.EventSerializer = EventSerializers.Json;
                 opts.SnapshotPredicate = null;
             },
             false);
-
-        //serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
-        //serviceCollection.AddScoped<Anthill>();
-
-        return serviceCollection;
-    }
-
-    private static IServiceCollection ConfigureMongoServices()
-    {
-        var serviceCollection = new ServiceCollection();
-
-        serviceCollection.AddEventStore(Assembly.GetExecutingAssembly(),
-            opts =>
-            {
-                //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(Configuration.SqlConnectionString));
-                opts.UseMongoDb(Configuration.MongoConnectionString);
-                //opts.UseDummyDapperStore(unsafeSqlConnectionString);
-                opts.EventSerializer = EventSerializers.Json;
-                opts.SnapshotPredicate = null;
-            },
-            false);
-
-        //serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
-        //serviceCollection.AddScoped<Anthill>();
 
         return serviceCollection;
     }
@@ -89,16 +69,43 @@ internal class Program
         serviceCollection.AddEventStore(Assembly.GetExecutingAssembly(),
             opts =>
             {
-                //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(Configuration.SqlConnectionString));
-                //opts.UseMongoDb(Configuration.MongoConnectionString);
+                opts.UseDapperStore(Configuration.SqlConnectionString);
+                opts.EventSerializer = EventSerializers.Json;
+                opts.SnapshotPredicate = null;
+            },
+            false);
+
+        return serviceCollection;
+    }
+
+    private static IServiceCollection ConfigureMongoServices()
+    {
+        var serviceCollection = new ServiceCollection();
+
+        serviceCollection.AddEventStore(Assembly.GetExecutingAssembly(),
+            opts =>
+            {
+                opts.UseMongoDb(Configuration.MongoConnectionString);
+                opts.EventSerializer = EventSerializers.Json;
+                opts.SnapshotPredicate = null;
+            },
+            false);
+
+        return serviceCollection;
+    }
+
+    private static IServiceCollection ConfigureDummyDapperServices()
+    {
+        var serviceCollection = new ServiceCollection();
+
+        serviceCollection.AddEventStore(Assembly.GetExecutingAssembly(),
+            opts =>
+            {
                 opts.UseDummyDapperStore(Configuration.UnsafeSqlConnectionString);
                 opts.EventSerializer = EventSerializers.Json;
                 opts.SnapshotPredicate = null;
             },
             true);
-
-        //serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
-        //serviceCollection.AddScoped<Anthill>();
 
         return serviceCollection;
     }
