@@ -2,6 +2,7 @@
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Snapshots;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace FancyEventStore.DapperDummyStore
 {
@@ -17,18 +18,29 @@ namespace FancyEventStore.DapperDummyStore
 
         public async Task AppendEventsAsync(IEnumerable<Event> events)
         {
-            var sql = @"MERGE INTO EventStreams AS TARGET
+            var mergeSql = @"MERGE INTO EventStreams AS TARGET
                         USING (SELECT @StreamId StreamId) AS SOURCE
                         ON SOURCE.StreamId = TARGET.StreamId
                         WHEN NOT MATCHED THEN
                         INSERT(StreamId)
-                        VALUES(StreamId);
-                        
-                        INSERT INTO Events(StreamId, Created, Type, Data, Version)
-                        VALUES (@StreamId, @Created, @Type, @Data, @Version);";
+                        VALUES(StreamId);";
+
+            var insertSql = @"INSERT INTO Events(StreamId, Created, Type, Data, Version)
+                            VALUES ";
+
+            var sb = new StringBuilder();
+            sb.AppendLine(mergeSql);
+            sb.Append(insertSql);
+
+            var last = events.Last();
+            foreach (var e in events)
+            {
+                sb.Append($"('{e.StreamId}', '{e.Created.ToString("yyyy-MM-dd hh:mm:ss")}', '{e.Type}', '{e.Data}', {e.Version})");
+                if (e != last) sb.Append(", ");
+            }
 
             using var connection = GetConnection();
-            await connection.ExecuteAsync(sql, events);
+            await connection.ExecuteAsync(sb.ToString(), new { StreamId = last.StreamId });
         }
 
         public async Task<IEnumerable<Event>> GetEventsAsync(Guid streamId, long? fromVersion = null, long? toVersion = null)

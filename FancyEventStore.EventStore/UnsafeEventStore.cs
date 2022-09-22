@@ -74,7 +74,7 @@ namespace FancyEventStore.EventStore
 
             var snapshotContext = new SnapshotContext(aggregate, eventsToStore, latestSnapshot?.CreatedAt, latestSnapshot?.Version);
 
-            if (_eventStoreOptions.SnapshotPredicate.ShouldTakeSnapshot(snapshotContext))
+            if (_eventStoreOptions.SnapshotPredicate?.ShouldTakeSnapshot(snapshotContext) ?? false)
             {
                 var snapshot = new Snapshot
                 {
