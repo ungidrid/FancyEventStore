@@ -13,7 +13,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
     {
         private readonly string _connectionString;
 
-        public Test1DummyDapper(IEventStore eventStore, string resultFileName, string connectionString) : base(eventStore, resultFileName)
+        public Test1DummyDapper(IEventStore eventStore, string resultFileName, string connectionString, int retriesCount) : base(eventStore, resultFileName, retriesCount)
         {
             _connectionString = connectionString;
         }

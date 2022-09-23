@@ -8,17 +8,18 @@ namespace FancyEventStore.DirectTests.Tests.Test1
     public abstract class Test1Base : TestBase
     {
         protected readonly IEventStore EventStore;
-        private readonly string _resultFileName;
+        protected readonly string resultFileName;
+        protected readonly int retriesCount;
+        protected Random temperatureProvider = new(1);
+        protected Dictionary<int, List<long>> testCases;
 
-        private Random _temperatureProvider = new(1);
-        private Dictionary<int, List<long>> _testCases;
-
-        public Test1Base(IEventStore eventStore, string resultFileName)
+        public Test1Base(IEventStore eventStore, string resultFileName, int retriesCount)
         {
             EventStore = eventStore;
 
-            _resultFileName = resultFileName;
-            _testCases = new()
+            this.resultFileName = resultFileName;
+            this.retriesCount = retriesCount;
+            testCases = new()
             {
                 {1, new List<long>() },
                 {2, new List<long>() },
@@ -53,9 +54,9 @@ namespace FancyEventStore.DirectTests.Tests.Test1
 
         public override async Task Run()
         {
-            foreach (var @case in _testCases)
+            foreach (var @case in testCases)
             {
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < retriesCount; i++)
                 {
                     await CleanData();
                     await FillData();
@@ -66,20 +67,20 @@ namespace FancyEventStore.DirectTests.Tests.Test1
 
                     for (int j = 0; j < @case.Key; j++)
                     {
-                        measurement.Record(_temperatureProvider.Next(-10, 40));
+                        measurement.Record(temperatureProvider.Next(-10, 40));
                     }
 
                     var sw = Stopwatch.StartNew();
                     await EventStore.Store(measurement);
                     sw.Stop();
 
-                    _testCases[@case.Key].Add(sw.ElapsedMilliseconds);
+                    testCases[@case.Key].Add(sw.ElapsedMilliseconds);
                 }
             }
 
-            foreach(var result in _testCases)
+            foreach(var result in testCases)
             {
-                File.AppendAllText(_resultFileName, $"({result.Key}, {result.Value.Average().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}), ");
+                File.AppendAllText(resultFileName, $"({result.Key}, {result.Value.Average().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}), ");
             }
         }
 

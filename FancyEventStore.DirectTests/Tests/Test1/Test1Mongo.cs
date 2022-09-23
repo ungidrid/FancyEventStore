@@ -14,7 +14,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
     {
         private readonly IMongoClient _mongoClient;
 
-        public Test1Mongo(IEventStore eventStore, IMongoClient mongoClient, string resultFileName) : base(eventStore, resultFileName)
+        public Test1Mongo(IEventStore eventStore, IMongoClient mongoClient, string resultFileName, int retriesCount) : base(eventStore, resultFileName, retriesCount)
         {
             _mongoClient = mongoClient;
         }

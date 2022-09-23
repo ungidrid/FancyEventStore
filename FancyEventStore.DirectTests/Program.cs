@@ -15,37 +15,43 @@ using System.Reflection;
 
 internal class Program
 {
-    private static IServiceCollection _services;
-    private static IServiceProvider _provider;
+    private const int retriesCount = 10;
     private static async Task Main(string[] args)
     {
+        
+    
+    }
+
+    private static async Task Test1()
+    {
         Console.WriteLine("Start Mongo");
-        _services = ConfigureMongoServices();
-        _provider = _services.BuildServiceProvider();
-        var test1Mongo = ActivatorUtilities.CreateInstance<Test1Mongo>(_provider, "test1_mongo.txt");
+        var services = ConfigureMongoServices();
+        var provider = services.BuildServiceProvider();
+        var test1Mongo = ActivatorUtilities.CreateInstance<Test1Mongo>(provider, "test1_mongo.txt", retriesCount);
         await test1Mongo.Run();
 
         Console.WriteLine("Start SQL");
-        _services = ConfigureEfServices();
-        _provider = _services.BuildServiceProvider();
-        var test1Ef = ActivatorUtilities.CreateInstance<Test1EF>(_provider, "test1_ef.txt");
+        services = ConfigureEfServices();
+        provider = services.BuildServiceProvider();
+        var test1Ef = ActivatorUtilities.CreateInstance<Test1EF>(provider, "test1_ef.txt", retriesCount);
         await test1Ef.Run();
 
         Console.WriteLine("Start Dapper");
-        _services = ConfigureDapperServices();
-        _provider = _services.BuildServiceProvider();
-        var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(_provider, "test1_dapper.txt");
+        services = ConfigureDapperServices();
+        provider = services.BuildServiceProvider();
+        var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(provider, "test1_dapper.txt", retriesCount);
         await test1Dapper.Run();
 
         Console.WriteLine("Start Dummy Dapper");
-        _services = ConfigureDummyDapperServices();
-        _provider = _services.BuildServiceProvider();
-        var test1DummyDapper = ActivatorUtilities.CreateInstance<Test1DummyDapper>(_provider, "test1_dummy_dapper.txt", Configuration.UnsafeSqlConnectionString);
+        services = ConfigureDummyDapperServices();
+        provider = services.BuildServiceProvider();
+        var test1DummyDapper = ActivatorUtilities.CreateInstance<Test1DummyDapper>(provider, "test1_dummy_dapper.txt", Configuration.UnsafeSqlConnectionString, retriesCount);
         await test1DummyDapper.Run();
+
+        Console.WriteLine("Start actor");
+        services = ConfigureActorSqlServices();
+        provider = services.BuildServiceProvider();
     }
-
-
-
 
     private static IServiceCollection ConfigureEfServices()
     {
@@ -76,6 +82,10 @@ internal class Program
             },
             false);
 
+        serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
+        serviceCollection.AddScoped<Anthill>();
+
+
         return serviceCollection;
     }
 
@@ -92,6 +102,9 @@ internal class Program
             },
             false);
 
+        serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
+        serviceCollection.AddScoped<Anthill>();
+
         return serviceCollection;
     }
 
@@ -107,6 +120,23 @@ internal class Program
                 opts.SnapshotPredicate = null;
             },
             true);
+
+        return serviceCollection;
+    }
+
+    private static IServiceCollection ConfigureActorSqlServices()
+    {
+        var serviceCollection = new ServiceCollection();
+
+        serviceCollection.AddEventStore(Assembly.GetExecutingAssembly(),
+            opts =>
+            {
+                opts.UseDapperStore(Configuration.SqlConnectionString);
+                opts.EventSerializer = EventSerializers.Json;
+                opts.SnapshotPredicate = null;
+            },
+            false);
+
 
         return serviceCollection;
     }

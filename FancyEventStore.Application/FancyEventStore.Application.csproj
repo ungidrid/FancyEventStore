@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AntActor.Core\AntActor.Core.csproj" />
     <ProjectReference Include="..\FancyEventStore.Domain\FancyEventStore.Domain.csproj" />
+    <ProjectReference Include="..\FancyEventStore.EventStore\FancyEventStore.EventStore.csproj" />
   </ItemGroup>
 
 </Project>

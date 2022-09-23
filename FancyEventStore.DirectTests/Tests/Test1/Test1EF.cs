@@ -14,7 +14,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
     {
         public EfCoreStoreContext _context { get; }
 
-        public Test1EF(IEventStore eventStore, EfCoreStoreContext context, string resultFileName) : base(eventStore, resultFileName)
+        public Test1EF(IEventStore eventStore, EfCoreStoreContext context, string resultFileName, int retiresCount) : base(eventStore, resultFileName, retiresCount)
         {
             _context = context;
             _context.Database.EnsureDeleted();

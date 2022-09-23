@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AntActor.Core\AntActor.Core.csproj" />
+    <ProjectReference Include="..\FancyEventStore.Application\FancyEventStore.Application.csproj" />
     <ProjectReference Include="..\FancyEventStore.Common\FancyEventStore.Common.csproj" />
     <ProjectReference Include="..\FancyEventStore.DapperDummyStore\FancyEventStore.DapperDummyStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.DapperProductionStore\FancyEventStore.DapperProductionStore.csproj" />

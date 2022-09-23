@@ -13,7 +13,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
     {
         private readonly IDbContext _context;
 
-        public Test1Dapper(IEventStore eventStore, IDbContext context, string resultFileName) : base(eventStore, resultFileName)
+        public Test1Dapper(IEventStore eventStore, IDbContext context, string resultFileName, int retriesCount) : base(eventStore, resultFileName, retriesCount)
         {
             _context = context;
         }
