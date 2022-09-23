@@ -25,6 +25,16 @@ namespace FancyEventStore.Api.Actors
         }
     }
 
+    public class CreateAndRecord: ReplyableMessageBase<bool>, ITemperatureMeasurementAction
+    {
+        public IEnumerable<decimal> Measurements { get; }
+
+        public CreateAndRecord(IEnumerable<decimal> measurements, ReplyChanel<bool> replyChanel): base(replyChanel)
+        {
+            Measurements = measurements;
+        }
+    }
+
     public class TemperatureMeasurementAnt : AbstractAnt<ITemperatureMeasurementAction>
     {
         private readonly Guid _id;
@@ -45,6 +55,7 @@ namespace FancyEventStore.Api.Actors
 
         public async Task StartMeasurement() => await PostAndReply<bool>(rc => new StartMeasurementAction(rc));
         public async Task Record(decimal temperature) => await PostAndReply<bool>(rc => new RecordMeasurementAction(temperature, rc));
+        public async Task CreateAndRecord(IEnumerable<decimal> temperature) => await PostAndReply<bool>(rc => new CreateAndRecord(temperature, rc));
 
         protected override async Task HandleMessage(ITemperatureMeasurementAction message)
         {
@@ -57,6 +68,14 @@ namespace FancyEventStore.Api.Actors
                 case RecordMeasurementAction a:
                     if (_measurement == null) throw new Exception("Measurement not started");
                     _measurement.Record(a.Temperature);
+                    break;
+                case CreateAndRecord a:
+                    _measurement = TemperatureMeasurement.Start(_id);
+
+                    foreach(var measurement in a.Measurements)
+                    {
+                        _measurement.Record(measurement);
+                    }
                     break;
             }
 

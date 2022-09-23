@@ -5,15 +5,17 @@ using System.Threading.Tasks;
 
 namespace AntActor.Core
 {
-    public interface IAnt { }
+    public interface IAnt: IDisposable { }
 
-    public abstract class AbstractAnt<T> : IAnt
+    public abstract class AbstractAnt<T> : IAnt, IDisposable
     {
         private readonly MailBox<AntMessage<T>> _mailBox;
+        protected readonly CancellationTokenSource cancellationToken;
 
         public AbstractAnt()
         {
             _mailBox = new MailBox<AntMessage<T>>();
+            cancellationToken = new CancellationTokenSource();
 
             Task.Factory.StartNew(async () =>
             {
@@ -28,10 +30,11 @@ namespace AntActor.Core
                     }
                     catch(Exception ex)
                     {
-                        Debug.WriteLine(ex);
+                        Console.WriteLine(ex.Message);
+                        throw;
                     }
                 }
-            }, TaskCreationOptions.LongRunning);
+            }, cancellationToken.Token);
 
         }
 
@@ -77,6 +80,11 @@ namespace AntActor.Core
                     default: throw new NotImplementedException("Not implemented handler for result");
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            cancellationToken.Cancel();
         }
     }
 }

@@ -22,5 +22,11 @@ namespace AntActor.Core
         {
             return (T)_ants.GetOrAdd((typeof(T), id), _ => _antResolver.Resolve<T>(id));
         }
+
+        public void MarkUnused<T>(string id)
+        {
+            _ants.TryRemove((typeof(T), id), out var actor);
+            actor.Dispose();
+        }
     }
 }

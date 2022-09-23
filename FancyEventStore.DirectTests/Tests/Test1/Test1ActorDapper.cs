@@ -2,12 +2,7 @@
 using FancyEventStore.Api.Actors;
 using FancyEventStore.DapperProductionStore;
 using FancyEventStore.EventStore.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests.Test1
 {
@@ -24,22 +19,24 @@ namespace FancyEventStore.DirectTests.Tests.Test1
         {
             foreach (var @case in testCases)
             {
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < retriesCount; i++)
                 {
                     await CleanData();
                     await FillData();
 
                     Console.WriteLine($"Case {@case.Key}; Attempt: {i}");
 
-                    var measurementAnt = _anthill.GetAnt<TemperatureMeasurementAnt>(Guid.NewGuid().ToString());
-                    var startTask = measurementAnt.StartMeasurement();
-
-                    var recordTasks = Enumerable.Range(0, @case.Key).Select(x => measurementAnt.Record(temperatureProvider.Next(-10, 40))).ToList();
-
-                    await Task.WhenAll(recordTasks.Concat(new[] { startTask }));
+                    var id = Guid.NewGuid().ToString();
+                    var measurementAnt = _anthill.GetAnt<TemperatureMeasurementAnt>(id);
+                    var temperature = Enumerable.Range(0, @case.Key)
+                        .Select(x => (decimal)temperatureProvider.Next(-10, 40))
+                        .ToList();
 
                     var sw = Stopwatch.StartNew();
+                    await measurementAnt.CreateAndRecord(temperature);
                     sw.Stop();
+
+                    _anthill.MarkUnused<TemperatureMeasurementAnt>(id);
 
                     testCases[@case.Key].Add(sw.ElapsedMilliseconds);
                 }

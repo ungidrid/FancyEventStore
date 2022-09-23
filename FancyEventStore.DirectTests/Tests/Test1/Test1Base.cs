@@ -48,7 +48,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
                 {85, new List<long>() },
                 {90, new List<long>() },
                 {95, new List<long>() },
-                {999, new List<long>() },
+                {100, new List<long>() },
             };
         }
 
@@ -78,6 +78,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
                 }
             }
 
+            File.Delete(resultFileName);
             foreach(var result in testCases)
             {
                 File.AppendAllText(resultFileName, $"({result.Key}, {result.Value.Average().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}), ");
