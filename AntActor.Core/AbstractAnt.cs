@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace AntActor.Core
 {
-    public interface IAnt: IDisposable { }
+    public interface IAnt: IDisposable 
+    {
+        Task OnActivateAsync();
+    }
 
     public abstract class AbstractAnt<T> : IAnt, IDisposable
     {
@@ -19,7 +22,6 @@ namespace AntActor.Core
 
             Task.Factory.StartNew(async () =>
             {
-                await OnActivateAsync();
                 while (true)
                 {
                     var message = await _mailBox.ReceiveAsync();
@@ -38,7 +40,7 @@ namespace AntActor.Core
 
         }
 
-        protected virtual Task OnActivateAsync() => Task.CompletedTask;
+        public virtual Task OnActivateAsync() => Task.CompletedTask;
         protected abstract Task HandleMessage(T message);
         protected abstract Task<HandleResult> HandleError(AntMessage<T> message, Exception ex);
 

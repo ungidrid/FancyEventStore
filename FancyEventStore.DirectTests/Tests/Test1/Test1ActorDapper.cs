@@ -27,7 +27,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
                     Console.WriteLine($"Case {@case.Key}; Attempt: {i}");
 
                     var id = Guid.NewGuid().ToString();
-                    var measurementAnt = _anthill.GetAnt<TemperatureMeasurementAnt>(id);
+                    var measurementAnt = await _anthill.GetAnt<TemperatureMeasurementAnt>(id);
                     var temperature = Enumerable.Range(0, @case.Key)
                         .Select(x => (decimal)temperatureProvider.Next(-10, 40))
                         .ToList();

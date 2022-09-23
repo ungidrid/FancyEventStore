@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace AntActor.Core
 {
@@ -18,9 +19,14 @@ namespace AntActor.Core
             _ants.AddOrUpdate((typeof(T), id), ant, (tuple, ant1) => ant1);
         }
 
-        public T GetAnt<T>(string id) where T: IAnt
+        public async Task<T> GetAnt<T>(string id) where T: IAnt
         {
-            return (T)_ants.GetOrAdd((typeof(T), id), _ => _antResolver.Resolve<T>(id));
+            var isNew = false;
+            var instance = (T)_ants.GetOrAdd((typeof(T), id), _ => { isNew = true; return _antResolver.Resolve<T>(id); });
+
+            if(isNew) await instance.OnActivateAsync();
+
+            return instance;
         }
 
         public void MarkUnused<T>(string id)

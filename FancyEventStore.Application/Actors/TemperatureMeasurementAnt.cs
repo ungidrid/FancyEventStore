@@ -48,7 +48,7 @@ namespace FancyEventStore.Api.Actors
             _id = Guid.Parse(id);
         }
 
-        protected override async Task OnActivateAsync()
+        public override async Task OnActivateAsync()
         {
             _measurement = await _eventStore.Rehydrate<TemperatureMeasurement>(_id);
         }
