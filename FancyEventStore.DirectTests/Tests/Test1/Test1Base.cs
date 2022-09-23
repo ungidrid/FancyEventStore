@@ -47,19 +47,19 @@ namespace FancyEventStore.DirectTests.Tests.Test1
                 {85, new List<long>() },
                 {90, new List<long>() },
                 {95, new List<long>() },
-                {100, new List<long>() },
+                {999, new List<long>() },
             };
         }
 
         public override async Task Run()
         {
-            await CleanData();
-            await FillData();
-
             foreach (var @case in _testCases)
             {
                 for (int i = 0; i < 10; i++)
                 {
+                    await CleanData();
+                    await FillData();
+
                     Console.WriteLine($"Case {@case.Key}; Attempt: {i}");
 
                     var measurement = TemperatureMeasurement.Start(Guid.NewGuid());
@@ -93,7 +93,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
             {
                 var temperatureMeasurement = TemperatureMeasurement.Start(Guid.NewGuid());
 
-                var measurementsCount = measurementsCountProvider.Next(1, 200);
+                var measurementsCount = measurementsCountProvider.Next(1, 20);
                 for (int j = 0; j < measurementsCount; j++)
                 {
                     temperatureMeasurement.Record(temperatureProvider.Next(-10, 40));

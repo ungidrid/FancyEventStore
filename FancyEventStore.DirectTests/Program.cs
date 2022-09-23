@@ -19,28 +19,29 @@ internal class Program
     private static IServiceProvider _provider;
     private static async Task Main(string[] args)
     {
-        //Console.WriteLine("Start Mongo");
-        //_services = ConfigureMongoServices();
-        //_provider = _services.BuildServiceProvider();
-        //var test1Mongo = ActivatorUtilities.CreateInstance<Test1Mongo>(_provider, "test1_mongo.txt");
-        //await test1Mongo.Run();
+        Console.WriteLine("Start Mongo");
+        _services = ConfigureMongoServices();
+        _provider = _services.BuildServiceProvider();
+        var test1Mongo = ActivatorUtilities.CreateInstance<Test1Mongo>(_provider, "test1_mongo.txt");
+        await test1Mongo.Run();
 
-        //Console.WriteLine("Start SQL");
-        //_services = ConfigureEfServices();
-        //_provider = _services.BuildServiceProvider();
-        //var test1Ef = ActivatorUtilities.CreateInstance<Test1EF>(_provider, "test1_ef.txt");
-        //await test1Ef.Run();
-
-        //Console.WriteLine("Start Dummy Dapper");
-        //_services = ConfigureDummyDapperServices();
-        //_provider = _services.BuildServiceProvider();
-        //var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(_provider, "test1_dapper.txt", Configuration.UnsafeSqlConnectionString);
-        //await test1Dapper.Run();
+        Console.WriteLine("Start SQL");
+        _services = ConfigureEfServices();
+        _provider = _services.BuildServiceProvider();
+        var test1Ef = ActivatorUtilities.CreateInstance<Test1EF>(_provider, "test1_ef.txt");
+        await test1Ef.Run();
 
         Console.WriteLine("Start Dapper");
         _services = ConfigureDapperServices();
         _provider = _services.BuildServiceProvider();
-        var test1Dapper = ActivatorUtilities.CreateInstance<Test1DummyDapper>(_provider, "test1_dapper.txt", Configuration.UnsafeSqlConnectionString);
+        var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(_provider, "test1_dapper.txt");
+        await test1Dapper.Run();
+
+        Console.WriteLine("Start Dummy Dapper");
+        _services = ConfigureDummyDapperServices();
+        _provider = _services.BuildServiceProvider();
+        var test1DummyDapper = ActivatorUtilities.CreateInstance<Test1DummyDapper>(_provider, "test1_dummy_dapper.txt", Configuration.UnsafeSqlConnectionString);
+        await test1DummyDapper.Run();
     }
 
 

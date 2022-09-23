@@ -17,6 +17,7 @@ namespace FancyEventStore.DapperProductionStore
         public DbContext(string connectionString)
         {
             _connectionString = connectionString;
+            EnsureCreated();
         }
 
         public IDbConnection Connection => _connection ?? OpenConnection();
