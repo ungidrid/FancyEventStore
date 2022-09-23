@@ -34,7 +34,21 @@ namespace FancyEventStore.DirectTests.Tests.Test2
                 {700, new List<long>() },
                 {800, new List<long>() },
                 {900, new List<long>() },
-                {999, new List<long>() }
+                {1000, new List<long>() },
+                {1500, new List<long>() },
+                {2500, new List<long>() },
+                {3500, new List<long>() },
+                {4500, new List<long>() },
+                {5500, new List<long>() },
+                {6500, new List<long>() },
+                {7500, new List<long>() },
+                {8500, new List<long>() },
+                {9500, new List<long>() },
+                {10500, new List<long>() },
+                {11500, new List<long>() },
+                {12500, new List<long>() },
+                {13500, new List<long>() },
+                {14500, new List<long>() }
             };
             this.eventStore = eventStore;
             this.resultFileName = resultFileName;

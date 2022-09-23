@@ -69,7 +69,7 @@ internal class Program
             opts =>
             {
                 opts.UseDapperStore(Configuration.SqlConnectionString);
-                opts.EventSerializer = EventSerializers.Json;
+                opts.EventSerializer = EventSerializers.MessagePack;
                 opts.SnapshotPredicate = null;
             },
             false);
@@ -89,7 +89,7 @@ internal class Program
             opts =>
             {
                 opts.UseMongoDb(Configuration.MongoConnectionString);
-                opts.EventSerializer = EventSerializers.Json;
+                opts.EventSerializer = EventSerializers.MessagePack;
                 opts.SnapshotPredicate = null;
             },
             false);

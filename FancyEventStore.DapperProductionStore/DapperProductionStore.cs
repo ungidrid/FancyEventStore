@@ -36,17 +36,26 @@ namespace FancyEventStore.DapperProductionStore
 	                UPDATE EventStreams
 	                SET Version = @Version
 	                WHERE StreamId = @StreamId;
+                
+                ";
 
-                INSERT INTO Events(StreamId, Created, Type, Data, Version)
+            var insertStatement =
+                @"INSERT INTO Events(StreamId, Created, Type, Data, Version)
                 VALUES ";
 
-
-            var values = events.Select((x, i) => $"('{x.StreamId}', '{x.Created.ToString(sqlDateFormat)}', '{x.Type}', '{x.Data}', {x.Version})").ToList();
-            var valuesString = string.Join(", \n", values);
+            var values = events.Select((x, i) => $"('{x.StreamId}', '{x.Created.ToString(sqlDateFormat)}', '{x.Type}', '{x.Data}', {x.Version})")
+                .Chunk(999)
+                .Select(x => string.Join(", \n", x))
+                .ToList();
 
             var queryBuilder = new StringBuilder(sql);
-            queryBuilder.Append(valuesString);
-            queryBuilder.AppendLine(";");
+            foreach(var value in values)
+            {
+                queryBuilder.Append(insertStatement);
+                queryBuilder.Append(value);
+                queryBuilder.AppendLine(";");
+            }
+
             queryBuilder.Append("COMMIT;");
 
             var finalSql = queryBuilder.ToString();
