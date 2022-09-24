@@ -17,7 +17,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
         protected readonly int retriesCount;
         protected Random temperatureProvider = new(1);
         protected Random delayProvider = new(1);
-        protected int actionsCount = 500;
+        protected int actionsCount = 1000;
 
         public Test5Base(IServiceProvider serviceProvider, string resultFileName, int threadsCount)
         {
@@ -73,7 +73,6 @@ namespace FancyEventStore.DirectTests.Tests.Test5
                             catch (AggregateException ex)
                             {
                                 Console.WriteLine($"Error {taskNumber}");
-                                Thread.Sleep(delayProvider.Next(0, 200));
                                 errorsCount++;
                                 goto X;
                             }

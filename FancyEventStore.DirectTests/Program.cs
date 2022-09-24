@@ -103,7 +103,7 @@ internal class Program
     private static async Task Test5()
     {
         IServiceProvider provider;
-        int threadsCount = 10;
+        int threadsCount = 20;
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
