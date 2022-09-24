@@ -24,13 +24,14 @@ namespace AntActor.Core
             {
                 while (true)
                 {
+                    cancellationToken.Token.ThrowIfCancellationRequested();
                     var message = await _mailBox.ReceiveAsync();
 
                     try
                     {
                         await Handle(message);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                         throw;
