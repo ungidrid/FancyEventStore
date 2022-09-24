@@ -68,7 +68,7 @@ namespace FancyEventStore.DapperDummyStore
             return await connection.QueryFirstOrDefaultAsync<EventStream>(sql, new { streamId });
         }
 
-        public Task SaveSnapshot(Snapshot snapshot)
+        public  Task SaveSnapshot(Snapshot snapshot)
         {
             return Task.CompletedTask;
         }

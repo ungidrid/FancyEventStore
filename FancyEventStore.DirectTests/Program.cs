@@ -10,6 +10,7 @@ using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Abstractions;
 using FancyEventStore.EventStore.Serializers;
+using FancyEventStore.EventStore.Snapshots;
 using FancyEventStore.MongoDbStore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -19,7 +20,7 @@ internal class Program
     private const int retriesCount = 10;
     private static async Task Main(string[] args)
     {
-        await Test3();
+        await Test2();
     }
 
     private static async Task Test1()
@@ -48,7 +49,7 @@ internal class Program
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
-        var test2Mongo = ActivatorUtilities.CreateInstance<Test3Mongo>(provider, "test2_mongo.txt", retriesCount);
+        var test2Mongo = ActivatorUtilities.CreateInstance<Test2Mongo>(provider, "test2_mongo.txt", retriesCount);
         await test2Mongo.Run();
 
         Console.WriteLine("Start Dapper");
@@ -66,20 +67,20 @@ internal class Program
     {
         IServiceProvider provider;
 
-        //Console.WriteLine("Start Mongo");
-        //provider = ConfigureMongoServices();
-        //var test3Mongo = ActivatorUtilities.CreateInstance<Test3Mongo>(provider, "test3_mongo.txt", retriesCount);
-        //await test3Mongo.Run();
+        Console.WriteLine("Start Mongo");
+        provider = ConfigureMongoServices();
+        var test3Mongo = ActivatorUtilities.CreateInstance<Test3Mongo>(provider, "test3_mongo.txt", retriesCount);
+        await test3Mongo.Run();
 
         Console.WriteLine("Start Dapper");
         provider = ConfigureDapperServices();
         var test3Dapper = ActivatorUtilities.CreateInstance<Test3Dapper>(provider, "test3_dapper.txt", retriesCount);
         await test3Dapper.Run();
 
-        //Console.WriteLine("Start Actor Dapper");
-        //provider = ConfigureDapperServices();
-        //var test3ActorDapper = ActivatorUtilities.CreateInstance<Test3ActorDapper>(provider, "test3_actor_dapper.txt", retriesCount);
-        //await test3ActorDapper.Run();
+        Console.WriteLine("Start Actor Dapper");
+        provider = ConfigureDapperServices();
+        var test3ActorDapper = ActivatorUtilities.CreateInstance<Test3ActorDapper>(provider, "test3_actor_dapper.txt", retriesCount);
+        await test3ActorDapper.Run();
     }
 
     private static IServiceProvider ConfigureDapperServices()
@@ -91,7 +92,7 @@ internal class Program
             {
                 opts.UseDapperStore(Configuration.SqlConnectionString);
                 opts.EventSerializer = EventSerializers.MessagePack;
-                opts.SnapshotPredicate = null;
+                opts.SnapshotPredicate = null;// new EachNEventsSnapshotPredicate(500);
             },
             false);
 
@@ -111,7 +112,7 @@ internal class Program
             {
                 opts.UseMongoDb(Configuration.MongoConnectionString);
                 opts.EventSerializer = EventSerializers.MessagePack;
-                opts.SnapshotPredicate = null;
+                opts.SnapshotPredicate = null;// new EachNEventsSnapshotPredicate(500);
             },
             false);
 

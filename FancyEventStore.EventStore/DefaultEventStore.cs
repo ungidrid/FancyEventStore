@@ -26,7 +26,10 @@ namespace FancyEventStore.EventStore
             var stream = await _store.GetStreamAsync(aggregateId);
             if (stream == null) return default;
 
-            var latestSnapshot = await _store.GetNearestSnapshotAsync(aggregateId, version);
+            var latestSnapshot = _eventStoreOptions.SnapshotPredicate == null 
+                ? null 
+                : await _store.GetNearestSnapshotAsync(aggregateId, version);
+
             var aggregate = latestSnapshot == null
                 ? Activator.CreateInstance<TAggregate>()
                 : (TAggregate)_eventStoreOptions.EventSerializer.Deserialize(latestSnapshot.Data, typeof(TAggregate));
@@ -92,11 +95,13 @@ namespace FancyEventStore.EventStore
         //TODO Think about possible concurrency problems when making snapshots
         private async Task HandleShnapshots<TAggregate>(TAggregate aggregate, List<Event> eventsToStore) where TAggregate : IAggregate
         {
+            if (_eventStoreOptions.SnapshotPredicate == null) return;
+
             var latestSnapshot = await _store.GetNearestSnapshotAsync(aggregate.Id);
 
             var snapshotContext = new SnapshotContext(aggregate, eventsToStore, latestSnapshot?.CreatedAt, latestSnapshot?.Version);
 
-            if (_eventStoreOptions.SnapshotPredicate?.ShouldTakeSnapshot(snapshotContext) ?? false)
+            if (_eventStoreOptions.SnapshotPredicate.ShouldTakeSnapshot(snapshotContext))
             {
                 var snapshot = new Snapshot
                 {

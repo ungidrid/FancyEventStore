@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace FancyEventStore.DirectTests.Tests.Test3
 {
-    public class Test2Mongo : Test3Base
+    public class Test2Mongo : Test2Base
     {
         private readonly IMongoClient _mongoClient;
 

@@ -84,7 +84,13 @@ namespace FancyEventStore.DapperProductionStore
 
         public async Task<Snapshot> GetNearestSnapshotAsync(Guid streamId, long? version = null)
         {
-            return null;
+            var sql =
+                @"SELECT TOP(1) * 
+                  FROM Snapshots
+                  WHERE StreamId = @streamId AND (@version IS NULL OR Version <= @version)
+                  ORDER BY Version DESC;";
+
+            return await _context.Connection.QueryFirstOrDefaultAsync<Snapshot>(sql, new { streamId, version });
         }
 
         public async Task<EventStream> GetStreamAsync(Guid streamId)
@@ -93,9 +99,13 @@ namespace FancyEventStore.DapperProductionStore
             return await _context.Connection.QueryFirstOrDefaultAsync<EventStream>(sql, new { streamId });
         }
 
-        public Task SaveSnapshot(Snapshot snapshot)
+        public async Task SaveSnapshot(Snapshot snapshot)
         {
-            return Task.CompletedTask;
+            var sql =
+                 @"INSERT INTO Snapshots(StreamId, Data, Version, CreatedAt)
+                  VALUES (@StreamId, @Data, @Version, @CreatedAt);";
+
+            await _context.Connection.ExecuteAsync(sql);
         }
     }
 }
