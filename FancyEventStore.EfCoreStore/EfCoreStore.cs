@@ -23,7 +23,7 @@ namespace FancyEventStore.EfCoreStore
             }
             catch(DbUpdateConcurrencyException) 
             {
-                throw new EventStoreConcurrencyException();
+                throw new EventStoreConcurrencyException("Inner");
             }
         }
 
@@ -43,7 +43,8 @@ namespace FancyEventStore.EfCoreStore
 
         public async Task<EventStream> GetStreamAsync(Guid streamId)
         {
-            return await _context.FindAsync<EventStream>(streamId);
+            _context.ChangeTracker.Clear();
+            return await _context.EventStreams.FirstOrDefaultAsync(x => x.StreamId == streamId);
         }
 
         public async Task<Snapshot> GetNearestSnapshotAsync(Guid streamId, long? version = null)

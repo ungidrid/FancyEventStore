@@ -2,7 +2,7 @@
 {
     public class EventStoreConcurrencyException : Exception
     {
-        public EventStoreConcurrencyException() : base()
+        public EventStoreConcurrencyException(string message = "") : base(message)
         {
         }
     }

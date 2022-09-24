@@ -83,7 +83,7 @@ namespace FancyEventStore.EventStore
         {
             var eventStream = await _store.GetStreamAsync(aggregate.Id);
 
-            if (eventStream != null && eventStream.Version != initialVersion) throw new EventStoreConcurrencyException();
+            if (eventStream != null && eventStream.Version != initialVersion) throw new EventStoreConcurrencyException("Outer");
 
             eventStream ??= new EventStream()
             {
