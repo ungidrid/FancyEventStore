@@ -5,6 +5,7 @@ using FancyEventStore.DirectTests;
 using FancyEventStore.DirectTests.Tests.Test1;
 using FancyEventStore.DirectTests.Tests.Test2;
 using FancyEventStore.DirectTests.Tests.Test3;
+using FancyEventStore.DirectTests.Tests.Test4;
 using FancyEventStore.Domain.TemperatureMeasurement;
 using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
@@ -17,10 +18,10 @@ using System.Reflection;
 
 internal class Program
 {
-    private const int retriesCount = 10;
+    private const int retriesCount = 5;
     private static async Task Main(string[] args)
     {
-        await Test2();
+        await Test4();
     }
 
     private static async Task Test1()
@@ -83,6 +84,26 @@ internal class Program
         await test3ActorDapper.Run();
     }
 
+    private static async Task Test4()
+    {
+        IServiceProvider provider;
+
+        Console.WriteLine("Start Mongo");
+        provider = ConfigureMongoServices();
+        var test4Mongo = ActivatorUtilities.CreateInstance<Test4Mongo>(provider, "test4_mongo.txt", retriesCount);
+        await test4Mongo.Run();
+
+        Console.WriteLine("Start Dapper");
+        provider = ConfigureDapperServices();
+        var test4Dapper = ActivatorUtilities.CreateInstance<Test4Dapper>(provider, "test4_dapper.txt", retriesCount);
+        await test4Dapper.Run();
+
+        Console.WriteLine("Start Actor Dapper");
+        provider = ConfigureDapperServices();
+        var test4ActorDapper = ActivatorUtilities.CreateInstance<Test4ActorDapper>(provider, "test4_actor_dapper.txt", retriesCount);
+        await test4ActorDapper.Run();
+    }
+
     private static IServiceProvider ConfigureDapperServices()
     {
         var serviceCollection = new ServiceCollection();
@@ -92,7 +113,7 @@ internal class Program
             {
                 opts.UseDapperStore(Configuration.SqlConnectionString);
                 opts.EventSerializer = EventSerializers.MessagePack;
-                opts.SnapshotPredicate = null;// new EachNEventsSnapshotPredicate(500);
+                opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(500);
             },
             false);
 
@@ -112,7 +133,7 @@ internal class Program
             {
                 opts.UseMongoDb(Configuration.MongoConnectionString);
                 opts.EventSerializer = EventSerializers.MessagePack;
-                opts.SnapshotPredicate = null;// new EachNEventsSnapshotPredicate(500);
+                opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(500);
             },
             false);
 

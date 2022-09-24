@@ -105,7 +105,7 @@ namespace FancyEventStore.DapperProductionStore
                  @"INSERT INTO Snapshots(StreamId, Data, Version, CreatedAt)
                   VALUES (@StreamId, @Data, @Version, @CreatedAt);";
 
-            await _context.Connection.ExecuteAsync(sql);
+            await _context.Connection.ExecuteAsync(sql, snapshot);
         }
     }
 }
