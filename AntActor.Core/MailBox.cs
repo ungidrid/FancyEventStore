@@ -4,7 +4,7 @@ using System.Threading.Tasks.Dataflow;
 
 namespace AntActor.Core
 {
-    public class MailBox<T>
+    public class MailBox<T>: IDisposable
     {
         private readonly BufferBlock<T> _mailBox;
 
@@ -35,6 +35,11 @@ namespace AntActor.Core
             var res = await Task.WhenAny(postTask, delayTask);
 
             return res == delayTask ? default : postTask.Result;
+        }
+
+        public void Dispose()
+        {
+            _mailBox.Complete();
         }
     }
 }

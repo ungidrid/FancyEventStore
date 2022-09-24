@@ -6,18 +6,15 @@ using FancyEventStore.DirectTests.Tests.Test2;
 using FancyEventStore.DirectTests.Tests.Test3;
 using FancyEventStore.DirectTests.Tests.Test4;
 using FancyEventStore.DirectTests.Tests.Test5;
-using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Serializers;
-using FancyEventStore.EventStore.Snapshots;
 using FancyEventStore.MongoDbStore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 internal class Program
 {
-    private const int retriesCount = 5;
+    private const int retriesCount = 1;
     private static async Task Main(string[] args)
     {
         await Test5();
@@ -106,21 +103,22 @@ internal class Program
     private static async Task Test5()
     {
         IServiceProvider provider;
+        int threadsCount = 10;
 
-        //Console.WriteLine("Start Mongo");
-        //provider = ConfigureMongoServices();
-        //var test5Mongo = ActivatorUtilities.CreateInstance<Test5Mongo>(provider, "test5_mongo.txt", retriesCount);
-        //await test5Mongo.Run();
+        Console.WriteLine("Start Mongo");
+        provider = ConfigureMongoServices();
+        var test5Mongo = ActivatorUtilities.CreateInstance<Test5Mongo>(provider, "test5_mongo.txt", threadsCount);
+        await test5Mongo.Run();
 
         Console.WriteLine("Start Dapper");
         provider = ConfigureDapperServices();
-        var test5Dapper = ActivatorUtilities.CreateInstance<Test5Ef>(provider, "test5_dapper.txt", retriesCount);
+        var test5Dapper = ActivatorUtilities.CreateInstance<Test5Dapper>(provider, "test5_dapper.txt", threadsCount);
         await test5Dapper.Run();
 
-        //Console.WriteLine("Start Actor Dapper");
-        //provider = ConfigureDapperServices();
-        //var test4ActorDapper = ActivatorUtilities.CreateInstance<Test4ActorDapper>(provider, "test4_actor_dapper.txt", retriesCount);
-        //await test4ActorDapper.Run();
+        Console.WriteLine("Start Actor Dapper");
+        provider = ConfigureDapperServices();
+        var test5ActorDapper = ActivatorUtilities.CreateInstance<Test5ActorDapper>(provider, "test5_actor_dapper.txt", threadsCount);
+        await test5ActorDapper.Run();
     }
 
 
@@ -131,7 +129,8 @@ internal class Program
         serviceCollection.AddEventStore(Assembly.GetExecutingAssembly(),
             opts =>
             {
-                opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(Configuration.SqlConnectionString));
+                //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(Configuration.SqlConnectionString));
+                opts.UseDapperStore(Configuration.SqlConnectionString);
                 opts.EventSerializer = EventSerializers.Json;
                 opts.SnapshotPredicate = null;// new EachNEventsSnapshotPredicate(500);
             },

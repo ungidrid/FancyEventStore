@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Snapshots;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
 
@@ -19,11 +20,11 @@ namespace FancyEventStore.DapperProductionStore
         public async Task AppendEventsAsync(EventStream stream, IEnumerable<Event> events)
         {
             var sql =
-                @"BEGIN TRANSACTION
+                @"
                 DECLARE @StreamTimestamp ROWVERSION;
 
                 SELECT @StreamTimestamp = Timestamp
-                FROM EventStreams
+                FROM EventStreams WITH (UPDLOCK, ROWLOCK)
                 WHERE StreamId = @StreamId;
 
                 IF @StreamTimestamp IS NOT NULL AND @StreamTimestamp != @Timestamp
@@ -56,17 +57,21 @@ namespace FancyEventStore.DapperProductionStore
                 queryBuilder.AppendLine(";");
             }
 
-            queryBuilder.Append("COMMIT;");
+            //queryBuilder.Append("COMMIT;");
 
             var finalSql = queryBuilder.ToString();
 
             try
             {
-                await _context.Connection.ExecuteAsync(finalSql, new { stream.StreamId, stream.Version, stream.Timestamp });
+                using (var transaction = _context.Connection.BeginTransaction(System.Data.IsolationLevel.ReadCommitted))
+                {
+                    var result = await _context.Connection.ExecuteAsync(finalSql, new { stream.StreamId, stream.Version, stream.Timestamp }, transaction);
+                    transaction.Commit();
+                }
             }
-            catch(SqlException ex) when (ex.Number == 424242)
+            catch(SqlException ex)
             {
-                throw new EventStoreConcurrencyException();
+                throw new EventStoreConcurrencyException("Inner");
             }
         }
 

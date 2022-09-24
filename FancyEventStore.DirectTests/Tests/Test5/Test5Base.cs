@@ -13,17 +13,17 @@ namespace FancyEventStore.DirectTests.Tests.Test5
         protected readonly IEventStore eventStore;
         protected readonly IServiceProvider serviceProvider;
         protected readonly string resultFileName;
+        protected readonly int threadsCount;
         protected readonly int retriesCount;
         protected Random temperatureProvider = new(1);
         protected Random delayProvider = new(1);
         protected int actionsCount = 500;
-        protected int recordEachAction = 25;
-        protected int threadsCount = 5;
-        public Test5Base(IServiceProvider serviceProvider, string resultFileName, int retriesCount)
+
+        public Test5Base(IServiceProvider serviceProvider, string resultFileName, int threadsCount)
         {
             this.serviceProvider = serviceProvider;
             this.resultFileName = resultFileName;
-            this.retriesCount = retriesCount;
+            this.threadsCount = threadsCount;
         }
 
         public override async Task Run()
@@ -31,69 +31,80 @@ namespace FancyEventStore.DirectTests.Tests.Test5
             await CleanData();
             await FillData();
 
-            Guid measurementId;
-            using (var scope = serviceProvider.CreateAsyncScope())
-            {
-                var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
-                measurementId = Guid.NewGuid();
-                var measurement = TemperatureMeasurement.Start(measurementId);
-                await eventStore.Store(measurement);
-            }
+            var actions = new Dictionary<int, (long TotalTime, int ErrorsCount)>();
 
-            var actions = new ConcurrentDictionary<(int Task, int Action), (long TotalTime, int ErrorsCount)>();
-
-            var tasks = new List<Thread>();
-            for (var t = 0; t < threadsCount; t++)
+            for (var parallelism = 1; parallelism <= threadsCount; parallelism++)
             {
-                int taskNumber = t;
-                var thread = new Thread(() =>
+                var threads = new List<Thread>();
+                var time = new ConcurrentBag<long>();
+                var errors = new ConcurrentBag<int>();
+
+                Guid measurementId;
+                using (var scope = serviceProvider.CreateAsyncScope())
                 {
-                    using var scope = serviceProvider.CreateScope();
                     var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
+                    measurementId = Guid.NewGuid();
+                    var measurement = TemperatureMeasurement.Start(measurementId);
+                    await eventStore.Store(measurement);
+                }
 
-                    int i = 1;
-                    Console.WriteLine($"Task {taskNumber} started");
-
-                    while (i <= actionsCount / threadsCount)
+                for (var t = 0; t < parallelism; t++)
+                {
+                    int taskNumber = t;
+                    var thread = new Thread(() =>
                     {
-                        Console.WriteLine($"Step {i}; Task {taskNumber}");
-                        int errorsCount = 0;
-                        var sw = Stopwatch.StartNew();
+                        using var scope = serviceProvider.CreateScope();
+                        var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
+
+                        int i = 1;
+
+                        while (i <= actionsCount / parallelism)
+                        {
+                            Console.WriteLine($"Step {i}; Task {taskNumber}");
+                            int errorsCount = 0;
+                            var sw = Stopwatch.StartNew();
                         X:
-                        try
-                        {
-                            var measurement = eventStore.Rehydrate<TemperatureMeasurement>(measurementId).Result;
-                            measurement.Record(taskNumber);
-                            eventStore.Store(measurement).Wait();
+                            try
+                            {
+                                var measurement = eventStore.Rehydrate<TemperatureMeasurement>(measurementId).Result;
+                                measurement.Record(taskNumber);
+                                eventStore.Store(measurement).Wait();
+                            }
+                            catch (AggregateException ex)
+                            {
+                                Console.WriteLine($"Error {taskNumber}");
+                                Thread.Sleep(delayProvider.Next(0, 200));
+                                errorsCount++;
+                                goto X;
+                            }
+
+                            sw.Stop();
+
+                            time.Add(sw.ElapsedMilliseconds);
+                            errors.Add(errorsCount);
+                            i++;
                         }
-                        catch (AggregateException ex)
-                        {
-                            Console.WriteLine($"Error {taskNumber}");
-                            Thread.Sleep(delayProvider.Next(0, 200));
-                            errorsCount++;
-                            goto X;
-                        }
+                    });
 
-                        sw.Stop();
+                    threads.Add(thread);
+                }
 
-                        actions.TryAdd((taskNumber, i), (sw.ElapsedMilliseconds, errorsCount));
+                threads.ForEach(x => x.Start());
+                threads.ForEach(x => x.Join());
 
-                        i++;
-                    }
-                });
-
-                tasks.Add(thread);
+                actions.Add(parallelism, (time.Sum(), errors.Sum()));
             }
 
-            tasks.ForEach(x => x.Start());
-            tasks.ForEach(x => x.Join());
-           
-
-            //File.Delete(resultFileName);
-            //foreach (var result in actions)
-            //{
-            //    File.AppendAllText(resultFileName, $"({result.Key}, {result.Value.Average().ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)}), ");
-            //}
+            File.Delete(resultFileName);
+            foreach (var result in actions)
+            {
+                File.AppendAllText(resultFileName, $"({result.Key}, {result.Value.TotalTime}), ");
+            }
+            File.AppendAllText(resultFileName, "\n");
+            foreach (var result in actions)
+            {
+                File.AppendAllText(resultFileName, $"({result.Key}, {result.Value.ErrorsCount}), ");
+            }
         }
 
         protected override async Task FillData()
@@ -101,7 +112,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
             using var scope = serviceProvider.CreateAsyncScope();
             var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
 
-            const int initialStreamsCount = 0;
+            const int initialStreamsCount = 100;
             var measurementsCountProvider = new Random(1);
             var temperatureProvider = new Random(1);
 

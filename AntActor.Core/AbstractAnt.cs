@@ -26,6 +26,7 @@ namespace AntActor.Core
                 {
                     cancellationToken.Token.ThrowIfCancellationRequested();
                     var message = await _mailBox.ReceiveAsync();
+                    cancellationToken.Token.ThrowIfCancellationRequested();
 
                     try
                     {
@@ -88,6 +89,7 @@ namespace AntActor.Core
         public void Dispose()
         {
             cancellationToken.Cancel();
+            _mailBox.Dispose();
         }
     }
 }

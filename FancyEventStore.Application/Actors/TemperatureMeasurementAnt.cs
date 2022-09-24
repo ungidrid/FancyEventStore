@@ -54,7 +54,7 @@ namespace FancyEventStore.Api.Actors
         }
 
         public async Task StartMeasurement() => await PostAndReply<bool>(rc => new StartMeasurementAction(rc));
-        public async Task Record(decimal temperature) => await PostAndReply<bool>(rc => new RecordMeasurementAction(temperature, rc));
+        public async Task Record(decimal temperature) => await PostAndReply<bool>(rc => new RecordMeasurementAction(temperature, rc)).ConfigureAwait(false);
         public async Task CreateAndRecord(IEnumerable<decimal> temperature) => await PostAndReply<bool>(rc => new CreateAndRecord(temperature, rc));
 
         protected override async Task HandleMessage(ITemperatureMeasurementAction message)
