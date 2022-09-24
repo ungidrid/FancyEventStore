@@ -31,7 +31,7 @@ namespace FancyEventStore.EventStore
                 ? Activator.CreateInstance<TAggregate>()
                 : (TAggregate)_eventStoreOptions.EventSerializer.Deserialize(latestSnapshot.Data, typeof(TAggregate));
             
-            var events = await _store.GetEventsAsync(aggregateId, latestSnapshot?.Version + 1 ?? 0, version);
+            var events = await _store.GetEventsAsync(aggregateId, latestSnapshot?.Version + 1 ?? null, version);
 
             events.ToList().ForEach(e =>
             {

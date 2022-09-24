@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace FancyEventStore.DirectTests.Tests.Test1
 {
-    public abstract class Test1Base : Test2Dapper
+    public abstract class Test1Base : TestBase
     {
         protected readonly IEventStore EventStore;
         protected readonly string resultFileName;

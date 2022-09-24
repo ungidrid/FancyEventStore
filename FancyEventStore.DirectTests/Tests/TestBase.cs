@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests
 {
-    public abstract class Test2Dapper
+    public abstract class TestBase
     {
         public abstract Task Run();
         protected abstract Task CleanData();

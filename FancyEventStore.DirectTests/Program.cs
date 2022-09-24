@@ -4,6 +4,7 @@ using FancyEventStore.DapperProductionStore;
 using FancyEventStore.DirectTests;
 using FancyEventStore.DirectTests.Tests.Test1;
 using FancyEventStore.DirectTests.Tests.Test2;
+using FancyEventStore.DirectTests.Tests.Test3;
 using FancyEventStore.Domain.TemperatureMeasurement;
 using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
@@ -18,7 +19,7 @@ internal class Program
     private const int retriesCount = 10;
     private static async Task Main(string[] args)
     {
-        await Test2();
+        await Test3();
     }
 
     private static async Task Test1()
@@ -47,7 +48,7 @@ internal class Program
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
-        var test2Mongo = ActivatorUtilities.CreateInstance<Test2Mongo>(provider, "test2_mongo.txt", retriesCount);
+        var test2Mongo = ActivatorUtilities.CreateInstance<Test3Mongo>(provider, "test2_mongo.txt", retriesCount);
         await test2Mongo.Run();
 
         Console.WriteLine("Start Dapper");
@@ -59,6 +60,26 @@ internal class Program
         provider = ConfigureDapperServices();
         var test2ActorDapper = ActivatorUtilities.CreateInstance<Test2ActorDapper>(provider, "test2_actor_dapper.txt", retriesCount);
         await test2ActorDapper.Run();
+    }
+
+    private static async Task Test3()
+    {
+        IServiceProvider provider;
+
+        //Console.WriteLine("Start Mongo");
+        //provider = ConfigureMongoServices();
+        //var test3Mongo = ActivatorUtilities.CreateInstance<Test3Mongo>(provider, "test3_mongo.txt", retriesCount);
+        //await test3Mongo.Run();
+
+        Console.WriteLine("Start Dapper");
+        provider = ConfigureDapperServices();
+        var test3Dapper = ActivatorUtilities.CreateInstance<Test3Dapper>(provider, "test3_dapper.txt", retriesCount);
+        await test3Dapper.Run();
+
+        //Console.WriteLine("Start Actor Dapper");
+        //provider = ConfigureDapperServices();
+        //var test3ActorDapper = ActivatorUtilities.CreateInstance<Test3ActorDapper>(provider, "test3_actor_dapper.txt", retriesCount);
+        //await test3ActorDapper.Run();
     }
 
     private static IServiceProvider ConfigureDapperServices()
