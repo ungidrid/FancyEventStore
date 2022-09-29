@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests.Test2
 {
+    //Read aggregate with certain count of events
     public abstract class Test2Base: Tests.TestBase
     {
         protected readonly IEventStore eventStore;

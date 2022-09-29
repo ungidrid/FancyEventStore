@@ -1,4 +1,5 @@
 ﻿
+using EventStore.Client;
 using FancyEventStore.Domain.TemperatureMeasurement;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Abstractions;
@@ -8,6 +9,7 @@ using System.Diagnostics;
 
 namespace FancyEventStore.DirectTests.Tests.Test5
 {
+    //Write to aggregate in parallel
     public abstract class Test5Base: TestBase
     {
         protected readonly IEventStore eventStore;
@@ -17,7 +19,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
         protected readonly int retriesCount;
         protected Random temperatureProvider = new(1);
         protected Random delayProvider = new(1);
-        protected int actionsCount = 1000;
+        protected int actionsCount = 500;
 
         public Test5Base(IServiceProvider serviceProvider, string resultFileName, int threadsCount)
         {
@@ -35,7 +37,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
 
             for (var parallelism = 1; parallelism <= threadsCount; parallelism++)
             {
-                var threads = new List<Thread>();
+                var threads = new List<Task>();
                 var time = new ConcurrentBag<long>();
                 var errors = new ConcurrentBag<int>();
 
@@ -51,7 +53,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
                 for (var t = 0; t < parallelism; t++)
                 {
                     int taskNumber = t;
-                    var thread = new Thread(() =>
+                    var thread = Task.Run(async () =>
                     {
                         using var scope = serviceProvider.CreateScope();
                         var eventStore = scope.ServiceProvider.GetRequiredService<IEventStore>();
@@ -66,11 +68,11 @@ namespace FancyEventStore.DirectTests.Tests.Test5
                         X:
                             try
                             {
-                                var measurement = eventStore.Rehydrate<TemperatureMeasurement>(measurementId).Result;
+                                var measurement = await eventStore.Rehydrate<TemperatureMeasurement>(measurementId);
                                 measurement.Record(taskNumber);
-                                eventStore.Store(measurement).Wait();
+                                await eventStore.Store(measurement);
                             }
-                            catch (AggregateException ex)
+                            catch (Exception ex)
                             {
                                 Console.WriteLine($"Error {taskNumber}");
                                 errorsCount++;
@@ -88,8 +90,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
                     threads.Add(thread);
                 }
 
-                threads.ForEach(x => x.Start());
-                threads.ForEach(x => x.Join());
+                await Task.WhenAll(threads);
 
                 actions.Add(parallelism, (time.Sum(), errors.Sum()));
             }

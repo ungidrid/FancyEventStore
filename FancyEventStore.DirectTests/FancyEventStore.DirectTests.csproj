@@ -19,6 +19,7 @@
     <ProjectReference Include="..\FancyEventStore.DapperProductionStore\FancyEventStore.DapperProductionStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.Domain\FancyEventStore.Domain.csproj" />
     <ProjectReference Include="..\FancyEventStore.EfCoreStore\FancyEventStore.EfCoreStore.csproj" />
+    <ProjectReference Include="..\FancyEventStore.EventStoreDb\FancyEventStore.EventStoreDb.csproj" />
     <ProjectReference Include="..\FancyEventStore.EventStore\FancyEventStore.EventStore.csproj" />
     <ProjectReference Include="..\FancyEventStore.MongoDbStore\FancyEventStore.MongoDbStore.csproj" />
   </ItemGroup>

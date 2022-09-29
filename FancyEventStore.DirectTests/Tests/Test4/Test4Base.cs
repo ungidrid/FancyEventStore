@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests.Test4
 {
+    //Create aggregate and record some number of events
     public abstract class Test4Base : TestBase
     {
         protected readonly IEventStore eventStore;
@@ -16,7 +17,7 @@ namespace FancyEventStore.DirectTests.Tests.Test4
         protected readonly int retriesCount;
         protected Random temperatureProvider = new(1);
         protected int actionsCount = 2000;
-        protected int recordEachAction = 25;
+        protected int recordEachAction = 50;
         public Test4Base(IEventStore eventStore, string resultFileName, int retriesCount)
         {
             this.eventStore = eventStore;

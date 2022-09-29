@@ -8,6 +8,7 @@ using FancyEventStore.DirectTests.Tests.Test4;
 using FancyEventStore.DirectTests.Tests.Test5;
 using FancyEventStore.EventStore;
 using FancyEventStore.EventStore.Serializers;
+using FancyEventStore.EventStoreDb;
 using FancyEventStore.MongoDbStore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -98,12 +99,17 @@ internal class Program
         provider = ConfigureDapperServices();
         var test4ActorDapper = ActivatorUtilities.CreateInstance<Test4ActorDapper>(provider, "test4_actor_dapper.txt", retriesCount);
         await test4ActorDapper.Run();
+
+        Console.WriteLine("Start EventStoreDb");
+        provider = ConfigureEventStoreDbServices();
+        var test4EventStoreDb = ActivatorUtilities.CreateInstance<Test4EventStoreDb>(provider, "test4_eventStoreDb.txt", retriesCount);
+        await test4EventStoreDb.Run();
     }
 
     private static async Task Test5()
     {
         IServiceProvider provider;
-        int threadsCount = 20;
+        int threadsCount = 5;
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
@@ -119,6 +125,11 @@ internal class Program
         provider = ConfigureDapperServices();
         var test5ActorDapper = ActivatorUtilities.CreateInstance<Test5ActorDapper>(provider, "test5_actor_dapper.txt", threadsCount);
         await test5ActorDapper.Run();
+
+        Console.WriteLine("Start EventStoreDb");
+        provider = ConfigureEventStoreDbServices();
+        var test5EventStoreDb = ActivatorUtilities.CreateInstance<Test5EventStoreDb>(provider, "test5_eventStoreDb.txt", threadsCount);
+        await test5EventStoreDb.Run();
     }
 
 
@@ -159,6 +170,14 @@ internal class Program
         serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
         serviceCollection.AddScoped<Anthill>();
 
+        return serviceCollection.BuildServiceProvider();
+    }
+
+    private static IServiceProvider ConfigureEventStoreDbServices()
+    {
+        var serviceCollection = new ServiceCollection();
+
+        serviceCollection.AddEventStoreDB(Configuration.EventStoreDbConnectionString);
         return serviceCollection.BuildServiceProvider();
     }
 }

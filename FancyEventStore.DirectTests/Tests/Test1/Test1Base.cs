@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace FancyEventStore.DirectTests.Tests.Test1
 {
+    //Write certain count of events for one aggregate
     public abstract class Test1Base : TestBase
     {
         protected readonly IEventStore EventStore;

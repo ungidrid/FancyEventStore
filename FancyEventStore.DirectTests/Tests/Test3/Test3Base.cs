@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests.Test3
 {
+    //Read aggregate of certain version
     public abstract class Test3Base : Tests.TestBase
     {
         protected readonly IEventStore eventStore;
