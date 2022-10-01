@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FancyEventStore.DirectTests.Tests.Test5
+﻿namespace FancyEventStore.DirectTests.Tests.Test5
 {
     public class Test5EventStoreDb : Test5Base
     {

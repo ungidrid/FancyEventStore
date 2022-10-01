@@ -1,14 +1,8 @@
 ﻿using AntActor.Core;
 using FancyEventStore.Api.Actors;
 using FancyEventStore.DapperProductionStore;
-using FancyEventStore.Domain.TemperatureMeasurement;
 using FancyEventStore.EventStore.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests.Test2
 {

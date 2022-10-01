@@ -1,15 +1,11 @@
 ﻿using FancyEventStore.Domain.TemperatureMeasurement;
 using FancyEventStore.EventStore.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests.Test3
 {
     //Read aggregate of certain version
+    //Can test with snapshots
     public abstract class Test3Base : Tests.TestBase
     {
         protected readonly IEventStore eventStore;
@@ -65,9 +61,7 @@ namespace FancyEventStore.DirectTests.Tests.Test3
                 {27000, new List<long>() },
                 {28000, new List<long>() },
                 {29000, new List<long>() },
-                {30000, new List<long>() },
-                {35000, new List<long>() },
-                {40000, new List<long>() }
+                {30000, new List<long>() }
             };
             this.eventStore = eventStore;
             this.resultFileName = resultFileName;

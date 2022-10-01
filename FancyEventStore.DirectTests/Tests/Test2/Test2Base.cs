@@ -1,11 +1,6 @@
 ﻿using FancyEventStore.Domain.TemperatureMeasurement;
 using FancyEventStore.EventStore.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FancyEventStore.DirectTests.Tests.Test2
 {
@@ -49,7 +44,23 @@ namespace FancyEventStore.DirectTests.Tests.Test2
                 {11500, new List<long>() },
                 {12500, new List<long>() },
                 {13500, new List<long>() },
-                {14500, new List<long>() }
+                {14500, new List<long>() },
+                {15000, new List<long>() },
+                {16000, new List<long>() },
+                {17000, new List<long>() },
+                {18000, new List<long>() },
+                {19000, new List<long>() },
+                {20000, new List<long>() },
+                {21000, new List<long>() },
+                {22000, new List<long>() },
+                {23000, new List<long>() },
+                {24000, new List<long>() },
+                {25000, new List<long>() },
+                {26000, new List<long>() },
+                {27000, new List<long>() },
+                {28000, new List<long>() },
+                {29000, new List<long>() },
+                {30000, new List<long>() }
             };
             this.eventStore = eventStore;
             this.resultFileName = resultFileName;

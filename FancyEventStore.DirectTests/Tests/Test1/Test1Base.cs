@@ -1,5 +1,4 @@
 ﻿using FancyEventStore.Domain.TemperatureMeasurement;
-using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore.Abstractions;
 using System.Diagnostics;
 
@@ -88,7 +87,7 @@ namespace FancyEventStore.DirectTests.Tests.Test1
 
         protected override async Task FillData()
         {
-            const int initialStreamsCount = 100;
+            const int initialStreamsCount = 1000;
             var measurementsCountProvider = new Random(1);
             var temperatureProvider = new Random(1);
 

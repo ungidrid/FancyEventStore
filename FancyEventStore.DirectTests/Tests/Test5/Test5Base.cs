@@ -1,7 +1,4 @@
-﻿
-using EventStore.Client;
-using FancyEventStore.Domain.TemperatureMeasurement;
-using FancyEventStore.EventStore;
+﻿using FancyEventStore.Domain.TemperatureMeasurement;
 using FancyEventStore.EventStore.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
@@ -19,7 +16,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
         protected readonly int retriesCount;
         protected Random temperatureProvider = new(1);
         protected Random delayProvider = new(1);
-        protected int actionsCount = 500;
+        protected int actionsCount = 2000;
 
         public Test5Base(IServiceProvider serviceProvider, string resultFileName, int threadsCount)
         {

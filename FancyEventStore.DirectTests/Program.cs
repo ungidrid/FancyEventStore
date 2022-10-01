@@ -15,7 +15,7 @@ using System.Reflection;
 
 internal class Program
 {
-    private const int retriesCount = 1;
+    private const int retriesCount = 10;
     private static async Task Main(string[] args)
     {
         await Test5();
@@ -27,17 +27,17 @@ internal class Program
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
-        var test1Mongo = ActivatorUtilities.CreateInstance<Test1Mongo>(provider, "test1_mongo.txt", retriesCount);
+        var test1Mongo = ActivatorUtilities.CreateInstance<Test1Mongo>(provider, "results/test1_mongo.txt", retriesCount);
         await test1Mongo.Run();
 
         Console.WriteLine("Start Dapper");
         provider = ConfigureDapperServices();
-        var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(provider, "test1_dapper.txt", retriesCount);
+        var test1Dapper = ActivatorUtilities.CreateInstance<Test1Dapper>(provider, "results/test1_dapper.txt", retriesCount);
         await test1Dapper.Run();
 
         Console.WriteLine("Start Actor Dapper");
         provider = ConfigureDapperServices();
-        var test1ActorDapper = ActivatorUtilities.CreateInstance<Test1ActorDapper>(provider, "test1_actor_dapper.txt", retriesCount);
+        var test1ActorDapper = ActivatorUtilities.CreateInstance<Test1ActorDapper>(provider, "results/test1_actor_dapper.txt", retriesCount);
         await test1ActorDapper.Run();
     }
 
@@ -47,17 +47,17 @@ internal class Program
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
-        var test2Mongo = ActivatorUtilities.CreateInstance<Test2Mongo>(provider, "test2_mongo.txt", retriesCount);
+        var test2Mongo = ActivatorUtilities.CreateInstance<Test2Mongo>(provider, "results/test2_mongo.txt", retriesCount);
         await test2Mongo.Run();
 
         Console.WriteLine("Start Dapper");
         provider = ConfigureDapperServices();
-        var test2Dapper = ActivatorUtilities.CreateInstance<Test2Dapper>(provider, "test2_dapper.txt", retriesCount);
+        var test2Dapper = ActivatorUtilities.CreateInstance<Test2Dapper>(provider, "results/test2_dapper.txt", retriesCount);
         await test2Dapper.Run();
 
         Console.WriteLine("Start Actor Dapper");
         provider = ConfigureDapperServices();
-        var test2ActorDapper = ActivatorUtilities.CreateInstance<Test2ActorDapper>(provider, "test2_actor_dapper.txt", retriesCount);
+        var test2ActorDapper = ActivatorUtilities.CreateInstance<Test2ActorDapper>(provider, "results/test2_actor_dapper.txt", retriesCount);
         await test2ActorDapper.Run();
     }
 
@@ -67,17 +67,17 @@ internal class Program
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
-        var test3Mongo = ActivatorUtilities.CreateInstance<Test3Mongo>(provider, "test3_mongo.txt", retriesCount);
+        var test3Mongo = ActivatorUtilities.CreateInstance<Test3Mongo>(provider, "results/test3_mongo.txt", retriesCount);
         await test3Mongo.Run();
 
         Console.WriteLine("Start Dapper");
         provider = ConfigureDapperServices();
-        var test3Dapper = ActivatorUtilities.CreateInstance<Test3Dapper>(provider, "test3_dapper.txt", retriesCount);
+        var test3Dapper = ActivatorUtilities.CreateInstance<Test3Dapper>(provider, "results/test3_dapper.txt", retriesCount);
         await test3Dapper.Run();
 
         Console.WriteLine("Start Actor Dapper");
         provider = ConfigureDapperServices();
-        var test3ActorDapper = ActivatorUtilities.CreateInstance<Test3ActorDapper>(provider, "test3_actor_dapper.txt", retriesCount);
+        var test3ActorDapper = ActivatorUtilities.CreateInstance<Test3ActorDapper>(provider, "results/test3_actor_dapper.txt", retriesCount);
         await test3ActorDapper.Run();
     }
 
@@ -87,22 +87,22 @@ internal class Program
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
-        var test4Mongo = ActivatorUtilities.CreateInstance<Test4Mongo>(provider, "test4_mongo.txt", retriesCount);
+        var test4Mongo = ActivatorUtilities.CreateInstance<Test4Mongo>(provider, "results/test4_mongo.txt", retriesCount);
         await test4Mongo.Run();
 
         Console.WriteLine("Start Dapper");
         provider = ConfigureDapperServices();
-        var test4Dapper = ActivatorUtilities.CreateInstance<Test4Dapper>(provider, "test4_dapper.txt", retriesCount);
+        var test4Dapper = ActivatorUtilities.CreateInstance<Test4Dapper>(provider, "results/test4_dapper.txt", retriesCount);
         await test4Dapper.Run();
 
         Console.WriteLine("Start Actor Dapper");
         provider = ConfigureDapperServices();
-        var test4ActorDapper = ActivatorUtilities.CreateInstance<Test4ActorDapper>(provider, "test4_actor_dapper.txt", retriesCount);
+        var test4ActorDapper = ActivatorUtilities.CreateInstance<Test4ActorDapper>(provider, "results/test4_actor_dapper.txt", retriesCount);
         await test4ActorDapper.Run();
 
         Console.WriteLine("Start EventStoreDb");
         provider = ConfigureEventStoreDbServices();
-        var test4EventStoreDb = ActivatorUtilities.CreateInstance<Test4EventStoreDb>(provider, "test4_eventStoreDb.txt", retriesCount);
+        var test4EventStoreDb = ActivatorUtilities.CreateInstance<Test4EventStoreDb>(provider, "results/test4_eventStoreDb.txt", retriesCount);
         await test4EventStoreDb.Run();
     }
 
@@ -113,22 +113,22 @@ internal class Program
 
         Console.WriteLine("Start Mongo");
         provider = ConfigureMongoServices();
-        var test5Mongo = ActivatorUtilities.CreateInstance<Test5Mongo>(provider, "test5_mongo.txt", threadsCount);
+        var test5Mongo = ActivatorUtilities.CreateInstance<Test5Mongo>(provider, "results/test5_mongo.txt", threadsCount);
         await test5Mongo.Run();
 
         Console.WriteLine("Start Dapper");
         provider = ConfigureDapperServices();
-        var test5Dapper = ActivatorUtilities.CreateInstance<Test5Dapper>(provider, "test5_dapper.txt", threadsCount);
+        var test5Dapper = ActivatorUtilities.CreateInstance<Test5Dapper>(provider, "results/test5_dapper.txt", threadsCount);
         await test5Dapper.Run();
 
         Console.WriteLine("Start Actor Dapper");
         provider = ConfigureDapperServices();
-        var test5ActorDapper = ActivatorUtilities.CreateInstance<Test5ActorDapper>(provider, "test5_actor_dapper.txt", threadsCount);
+        var test5ActorDapper = ActivatorUtilities.CreateInstance<Test5ActorDapper>(provider, "results/test5_actor_dapper.txt", threadsCount);
         await test5ActorDapper.Run();
 
         Console.WriteLine("Start EventStoreDb");
         provider = ConfigureEventStoreDbServices();
-        var test5EventStoreDb = ActivatorUtilities.CreateInstance<Test5EventStoreDb>(provider, "test5_eventStoreDb.txt", threadsCount);
+        var test5EventStoreDb = ActivatorUtilities.CreateInstance<Test5EventStoreDb>(provider, "results/test5_eventStoreDb.txt", threadsCount);
         await test5EventStoreDb.Run();
     }
 
