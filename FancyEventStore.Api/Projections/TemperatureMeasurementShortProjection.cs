@@ -45,7 +45,8 @@ namespace FancyEventStore.Api.Projections
             var applyTask = @event switch
             {
                 TemperatureMeasurementStarted e => ApplyAsync(e),
-                TemperatureRecorded e => ApplyAsync(e)
+                TemperatureRecorded e => ApplyAsync(e),
+                _ => throw new ArgumentException()
             };
 
             await applyTask;

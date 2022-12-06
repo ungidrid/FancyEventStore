@@ -75,7 +75,7 @@ namespace FancyEventStore.EventStore
 
             await _store.AppendEventsAsync(eventStream, eventsToStore);
 
-            //HandleProjections(events);
+            HandleProjections(events);
             await HandleShnapshots(aggregate, eventsToStore);
         }
 
@@ -83,7 +83,7 @@ namespace FancyEventStore.EventStore
         {
             var eventStream = await _store.GetStreamAsync(aggregate.Id);
 
-            if (eventStream != null && eventStream.Version != initialVersion) throw new EventStoreConcurrencyException("Outer");
+            if (eventStream != null && eventStream.Version != initialVersion) throw new EventStoreConcurrencyException();
 
             eventStream ??= new EventStream()
             {
@@ -92,7 +92,6 @@ namespace FancyEventStore.EventStore
             return eventStream;
         }
 
-        //TODO Think about possible concurrency problems when making snapshots
         private async Task HandleShnapshots<TAggregate>(TAggregate aggregate, List<Event> eventsToStore) where TAggregate : IAggregate
         {
             if (_eventStoreOptions.SnapshotPredicate == null) return;

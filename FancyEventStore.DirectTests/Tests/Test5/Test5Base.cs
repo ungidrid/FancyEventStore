@@ -9,7 +9,6 @@ namespace FancyEventStore.DirectTests.Tests.Test5
     //Write to aggregate in parallel
     public abstract class Test5Base: TestBase
     {
-        protected readonly IEventStore eventStore;
         protected readonly IServiceProvider serviceProvider;
         protected readonly string resultFileName;
         protected readonly int threadsCount;
@@ -62,6 +61,7 @@ namespace FancyEventStore.DirectTests.Tests.Test5
                             Console.WriteLine($"Step {i}; Task {taskNumber}");
                             int errorsCount = 0;
                             var sw = Stopwatch.StartNew();
+                            
                         X:
                             try
                             {
@@ -69,10 +69,12 @@ namespace FancyEventStore.DirectTests.Tests.Test5
                                 measurement.Record(taskNumber);
                                 await eventStore.Store(measurement);
                             }
-                            catch (Exception ex)
+                            catch
                             {
                                 Console.WriteLine($"Error {taskNumber}");
                                 errorsCount++;
+
+                                //Simple way to do infinite retries - don't blame me for it - this is not production code
                                 goto X;
                             }
 

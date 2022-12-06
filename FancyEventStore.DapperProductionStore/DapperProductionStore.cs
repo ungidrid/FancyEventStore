@@ -57,8 +57,6 @@ namespace FancyEventStore.DapperProductionStore
                 queryBuilder.AppendLine(";");
             }
 
-            //queryBuilder.Append("COMMIT;");
-
             var finalSql = queryBuilder.ToString();
 
             try
@@ -71,7 +69,7 @@ namespace FancyEventStore.DapperProductionStore
             }
             catch(SqlException ex)
             {
-                throw new EventStoreConcurrencyException("Inner");
+                throw new EventStoreConcurrencyException();
             }
         }
 

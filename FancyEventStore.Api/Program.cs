@@ -1,6 +1,5 @@
 using AntActor.Core;
 using FancyEventStore.Common;
-using FancyEventStore.DapperDummyStore;
 using FancyEventStore.DapperProductionStore;
 using FancyEventStore.EfCoreStore;
 using FancyEventStore.EventStore;
@@ -17,10 +16,7 @@ RuntimeTypeModel.Default.Add(typeof(DateTimeOffset), false).SetSurrogate(typeof(
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -34,11 +30,9 @@ builder.Services.AddEventStore(Assembly.GetExecutingAssembly(),
         opts.UseDapperStore(sqlConnectionString);
         //opts.UseEfCore(dbContextOptions => dbContextOptions.UseSqlServer(sqlConnectionString));
         //opts.UseMongoDb(mongoConnectionString);
-        //opts.UseDummyDapperStore(unsafeSqlConnectionString);
         opts.EventSerializer = EventSerializers.Json;
         opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(10);
-    },
-    false);
+    });
 
 builder.Services.AddRepositories();
 builder.Services.AddScoped<IReadModelContext>(_ => new ReadModelContext(sqlConnectionString));

@@ -23,7 +23,7 @@ namespace FancyEventStore.EfCoreStore
             }
             catch(DbUpdateConcurrencyException) 
             {
-                throw new EventStoreConcurrencyException("Inner");
+                throw new EventStoreConcurrencyException();
             }
         }
 

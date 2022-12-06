@@ -19,7 +19,11 @@ internal class Program
     private const int retriesCount = 1;
     private static async Task Main(string[] args)
     {
+        await Test1();
+        await Test2();
+        await Test3();
         await Test4();
+        await Test5();
     }
 
     private static async Task Test1()
@@ -91,20 +95,20 @@ internal class Program
         var test4Mongo = ActivatorUtilities.CreateInstance<Test4Mongo>(provider, "results/test4_mongo_snapshot.txt", retriesCount);
         await test4Mongo.Run();
 
-        //Console.WriteLine("Start Dapper");
-        //provider = ConfigureDapperServices();
-        //var test4Dapper = ActivatorUtilities.CreateInstance<Test4Dapper>(provider, "results/test4_dapper_snapshot.txt", retriesCount);
-        //await test4Dapper.Run();
+        Console.WriteLine("Start Dapper");
+        provider = ConfigureDapperServices();
+        var test4Dapper = ActivatorUtilities.CreateInstance<Test4Dapper>(provider, "results/test4_dapper_snapshot.txt", retriesCount);
+        await test4Dapper.Run();
 
-        //Console.WriteLine("Start Actor Dapper");
-        //provider = ConfigureDapperServices();
-        //var test4ActorDapper = ActivatorUtilities.CreateInstance<Test4ActorDapper>(provider, "results/test4_actor_dapper.txt", retriesCount);
-        //await test4ActorDapper.Run();
+        Console.WriteLine("Start Actor Dapper");
+        provider = ConfigureDapperServices();
+        var test4ActorDapper = ActivatorUtilities.CreateInstance<Test4ActorDapper>(provider, "results/test4_actor_dapper.txt", retriesCount);
+        await test4ActorDapper.Run();
 
-        //Console.WriteLine("Start EventStoreDb");
-        //provider = ConfigureEventStoreDbServices();
-        //var test4EventStoreDb = ActivatorUtilities.CreateInstance<Test4EventStoreDb>(provider, "results/test4_eventStoreDb.txt", retriesCount);
-        //await test4EventStoreDb.Run();
+        Console.WriteLine("Start EventStoreDb");
+        provider = ConfigureEventStoreDbServices();
+        var test4EventStoreDb = ActivatorUtilities.CreateInstance<Test4EventStoreDb>(provider, "results/test4_eventStoreDb.txt", retriesCount);
+        await test4EventStoreDb.Run();
     }
 
     private static async Task Test5()
@@ -145,8 +149,7 @@ internal class Program
                 opts.UseDapperStore(Configuration.SqlConnectionString);
                 opts.EventSerializer = EventSerializers.Json;
                 opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(200);
-            },
-            false);
+            });
 
         serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
         serviceCollection.AddScoped<Anthill>();
@@ -165,8 +168,7 @@ internal class Program
                 opts.UseMongoDb(Configuration.MongoConnectionString);
                 opts.EventSerializer = EventSerializers.Json;
                 opts.SnapshotPredicate = new EachNEventsSnapshotPredicate(200);
-            },
-            false);
+            });
 
         serviceCollection.AddTransient<IAntResolver, DIResolver>(provider => new DIResolver(provider));
         serviceCollection.AddScoped<Anthill>();
