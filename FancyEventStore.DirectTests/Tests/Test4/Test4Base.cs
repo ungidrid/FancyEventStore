@@ -13,7 +13,7 @@ namespace FancyEventStore.DirectTests.Tests.Test4
         protected readonly int retriesCount;
         protected Random temperatureProvider = new(1);
         protected int actionsCount = 5000;
-        protected int recordEachAction = 50;
+        protected int recordEachAction = 5;
         public Test4Base(IEventStore eventStore, string resultFileName, int retriesCount)
         {
             this.eventStore = eventStore;

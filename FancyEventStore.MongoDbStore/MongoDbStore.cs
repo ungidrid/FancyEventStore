@@ -71,7 +71,7 @@ namespace FancyEventStore.MongoDbStore
             return events?.Select(x => x.ToDomain()).ToList().AsEnumerable() ?? Enumerable.Empty<Event>();
         }
 
-        public async Task<Snapshot> GetNearestSnapshotAsync(Guid streamId, long? version = null)
+        public async Task<Snapshot> GetNearestSnapshotAsync1(Guid streamId, long? version = null)
         {
             var collection = GetEventStreamsCollection();
 
@@ -86,13 +86,35 @@ namespace FancyEventStore.MongoDbStore
             return snapshot?.Snapshots?.ToDomain();
         }
 
+        public async Task<Snapshot> GetNearestSnapshotAsync(Guid streamId, long? version = null)
+        {
+            var collection = GetSnapshotsCollection();
+            var filterBuilder = Builders<Entities.Snapshot>.Filter;
+            FilterDefinition<Entities.Snapshot> filter = null;
+
+            if (version != null)
+            {
+                filter = filterBuilder.And(
+                    filterBuilder.Lte(x => x.Version, version),
+                    filterBuilder.Eq(x => x.StreamId, streamId)
+                );
+            }
+            else
+            {
+                filter = filterBuilder.Eq(x => x.StreamId, streamId);
+            }
+
+            var snapshot = await collection.Find(filter).SortByDescending(x => x.Version).FirstOrDefaultAsync();
+            return snapshot?.ToDomain();
+        }
+
         public async Task<EventStream> GetStreamAsync(Guid streamId)
         {
             var eventStream = await GetStreamAsync(streamId, false);
             return eventStream?.ToDomain();
         }
 
-        public async Task SaveSnapshot(Snapshot snapshot)
+        public async Task SaveSnapshot1(Snapshot snapshot)
         {
             var collection = GetEventStreamsCollection();
             var snapshotEntity = snapshot.ToEntity();
@@ -101,6 +123,14 @@ namespace FancyEventStore.MongoDbStore
                 .Push(x => x.Snapshots, snapshotEntity);
 
             await collection.UpdateOneAsync(x => x.StreamId == snapshot.StreamId, update);
+        }
+
+        public async Task SaveSnapshot(Snapshot snapshot)
+        {
+            var collection = GetSnapshotsCollection();
+            var snapshotEntity = snapshot.ToEntity();
+
+            await collection.InsertOneAsync(snapshotEntity);
         }
 
         private async Task<Entities.EventStream> GetStreamAsync(Guid streamId, bool includeEvents)
@@ -125,6 +155,14 @@ namespace FancyEventStore.MongoDbStore
         {
             var db = _mongoClient.GetDatabase("EventStore");
             var collection = db.GetCollection<Entities.EventStream>("EventStream");
+
+            return collection;
+        }
+
+        private IMongoCollection<Entities.Snapshot> GetSnapshotsCollection()
+        {
+            var db = _mongoClient.GetDatabase("EventStore");
+            var collection = db.GetCollection<Entities.Snapshot>("Snapshots");
 
             return collection;
         }

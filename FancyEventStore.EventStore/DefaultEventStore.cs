@@ -76,7 +76,7 @@ namespace FancyEventStore.EventStore
             await _store.AppendEventsAsync(eventStream, eventsToStore);
 
             //HandleProjections(events);
-            //await HandleShnapshots(aggregate, eventsToStore);
+            await HandleShnapshots(aggregate, eventsToStore);
         }
 
         private async Task<EventStream> GetStream<TAggregate>(TAggregate aggregate, long initialVersion) where TAggregate : IAggregate
